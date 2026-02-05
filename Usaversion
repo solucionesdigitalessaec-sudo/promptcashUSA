@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta tags para evitar caché -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>PROMPTCASH IA - Ultimate Global Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        indigo: { 450: '#6366f1', 550: '#4f46e5' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+        .prompt-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .prompt-card:hover { transform: translateY(-4px); }
+        
+        /* Light/Dark Shadows */
+        .light .prompt-card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .dark .prompt-card { background-color: #1e293b; border-color: #334155; }
+        .dark .prompt-card:hover { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); border-color: #6366f1; }
+
+        .sidebar-item.active { background-color: #4f46e5; color: white; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+
+        .notification { position: fixed; bottom: 30px; right: 30px; display: none; animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100; }
+        @keyframes slideIn { from { transform: translateX(100%) scale(0.5); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+        
+        .lang-btn { transition: all 0.2s; filter: grayscale(100%); opacity: 0.5; width: 32px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 4px; overflow: hidden; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); }
+        .lang-btn.active { filter: grayscale(0%); opacity: 1; transform: scale(1.15); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); border-color: #4f46e5; }
+        .lang-btn svg { width: 100%; height: 100%; object-fit: cover; }
+        
+        .mod-btn-m { transition: all 0.2s; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 8px; border-radius: 8px; text-align: center; }
+        .mod-btn-m.active { background-color: #4f46e5 !important; color: white !important; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
+        
+        .var-highlight { color: #4f46e5; font-weight: 800; background-color: rgba(79, 70, 229, 0.1); padding: 0 2px; border-radius: 2px; }
+        .dark .var-highlight { color: #818cf8; background-color: rgba(99, 102, 241, 0.2); }
+
+        .mobile-lang-scroll { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .mobile-lang-scroll::-webkit-scrollbar { display: none; }
+        
+        /* Enlaces a IA */
+        .ai-link {
+            font-size: 9px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em;
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            transition: all 0.2s;
+            display: flex; 
+            align-items: center; 
+            gap: 4px;
+        }
+        .ai-link:hover { transform: translateY(-1px); }
+        .light .ai-link { background: #f1f5f9; color: #64748b; }
+        .light .ai-link:hover { background: #e2e8f0; color: #0f172a; }
+        .dark .ai-link { background: #1e293b; color: #94a3b8; }
+        .dark .ai-link:hover { background: #334155; color: #fff; }
+
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+    
+    <div id="copyNotification" class="notification bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 dark:border-slate-200">
+        <div class="bg-green-500 p-1 rounded-full text-white"><i data-lucide="check" class="w-4 h-4"></i></div>
+        <span id="ui-copied" class="font-bold text-sm">Copiado con éxito</span>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Desktop -->
+        <aside class="w-80 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden lg:flex flex-col shadow-sm z-20 transition-colors duration-300">
+            <div class="p-8 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-4">
+                    <div class="bg-indigo-600 p-2.5 rounded-2xl text-white shadow-indigo-200 dark:shadow-none shadow-lg"><i data-lucide="zap" class="w-7 h-7 fill-current"></i></div>
+                    <div class="flex flex-col"><span class="text-indigo-600 dark:text-indigo-400 font-black text-2xl uppercase tracking-tighter leading-none italic">PROMPTCASH</span><span class="text-slate-400 dark:text-slate-500 font-black text-[10px] tracking-[0.2em] leading-none mt-1 uppercase">Global AI Master v5.0</span></div>
+                </div>
+            </div>
+            <!-- Theme & Langs -->
+            <div class="px-6 py-5 border-b border-slate-50 dark:border-slate-800 flex flex-col gap-4 bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="flex justify-between w-full flex-wrap gap-2">
+                     <button onclick="setLanguage('en')" id="d-lang-en" class="lang-btn active" title="English"><svg viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#3c3b6e"/><path d="M0,450H7410M0,1050H7410M0,1650H7410M0,2250H7410M0,2850H7410M0,3450H7410" stroke="#fff" stroke-width="300"/><path d="M0,150H7410M0,750H7410M0,1350H7410M0,1950H7410M0,2550H7410M0,3150H7410M0,3750H7410" stroke="#b22234" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/></svg></button>
+                     <button onclick="setLanguage('es')" id="d-lang-es" class="lang-btn" title="Español"><svg viewBox="0 0 750 500"><rect width="750" height="500" fill="#c60b1e"/><rect width="750" height="250" y="125" fill="#ffc400"/></svg></button>
+                     <button onclick="setLanguage('de')" id="d-lang-de" class="lang-btn" title="Deutsch"><svg viewBox="0 0 5 3"><rect width="5" height="3" y="0" fill="#000"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg></button>
+                     <button onclick="setLanguage('fr')" id="d-lang-fr" class="lang-btn" title="Français"><svg viewBox="0 0 3 2"><rect width="1" height="2" x="0" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg></button>
+                     <button onclick="setLanguage('pt')" id="d-lang-pt" class="lang-btn" title="Português"><svg viewBox="0 0 720 504"><rect width="720" height="504" fill="#009c3b"/><path d="M360 72L648 252L360 432L72 252Z" fill="#ffdf00"/><circle cx="360" cy="252" r="100.8" fill="#002776"/></svg></button>
+                     <button onclick="setLanguage('it')" id="d-lang-it" class="lang-btn" title="Italiano"><svg viewBox="0 0 3 2"><rect width="1" height="2" x="0" fill="#009246"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ce2b37"/></svg></button>
+                </div>
+                <button onclick="toggleTheme()" class="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+                    <i data-lucide="moon" class="w-4 h-4"></i> <span id="theme-text">Dark Mode</span>
+                </button>
+            </div>
+            <nav class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                <button onclick="switchModule(0)" id="d-mod-0" class="sidebar-item active w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all font-bold group"><i data-lucide="target" class="w-5 h-5"></i> <span id="nav-mod-1">Strategy</span></button>
+                <button onclick="switchModule(1)" id="d-mod-1" class="sidebar-item w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="smartphone" class="w-5 h-5"></i> <span id="nav-mod-2">Content</span></button>
+                <button onclick="switchModule(2)" id="d-mod-2" class="sidebar-item w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="edit-3" class="w-5 h-5"></i> <span id="nav-mod-3">Copywriting</span></button>
+                <button onclick="switchModule(3)" id="d-mod-3" class="sidebar-item w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left transition-all font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="mail" class="w-5 h-5"></i> <span id="nav-mod-4">Email Mkt</span></button>
+            </nav>
+        </aside>
+        
+        <!-- Mobile Header -->
+        <main class="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 custom-scrollbar flex flex-col transition-colors duration-300">
+            <header class="lg:hidden flex flex-col p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 gap-4 flex-shrink-0 z-50 shadow-sm">
+                <div class="flex items-center justify-between pt-1">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-indigo-600 p-1.5 rounded-lg text-white"><i data-lucide="zap" class="w-4 h-4 fill-current"></i></div>
+                        <span class="text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-tighter text-lg">PROMPTCASH</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                        <i data-lucide="moon" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <!-- Banderas Móvil Grid Fijo -->
+                <div class="flex justify-center bg-slate-50 dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <div class="grid grid-cols-6 gap-3">
+                        <button onclick="setLanguage('en')" id="m-lang-en" class="lang-btn active"><svg viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#3c3b6e"/><path d="M0,450H7410M0,1050H7410M0,1650H7410M0,2250H7410M0,2850H7410M0,3450H7410" stroke="#fff" stroke-width="300"/><path d="M0,150H7410M0,750H7410M0,1350H7410M0,1950H7410M0,2550H7410M0,3150H7410M0,3750H7410" stroke="#b22234" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/></svg></button>
+                        <button onclick="setLanguage('es')" id="m-lang-es" class="lang-btn"><svg viewBox="0 0 750 500"><rect width="750" height="500" fill="#c60b1e"/><rect width="750" height="250" y="125" fill="#ffc400"/></svg></button>
+                        <button onclick="setLanguage('de')" id="m-lang-de" class="lang-btn"><svg viewBox="0 0 5 3"><rect width="5" height="3" y="0" fill="#000"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg></button>
+                        <button onclick="setLanguage('fr')" id="m-lang-fr" class="lang-btn"><svg viewBox="0 0 3 2"><rect width="1" height="2" x="0" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg></button>
+                        <button onclick="setLanguage('pt')" id="m-lang-pt" class="lang-btn"><svg viewBox="0 0 720 504"><rect width="720" height="504" fill="#009c3b"/><path d="M360 72L648 252L360 432L72 252Z" fill="#ffdf00"/><circle cx="360" cy="252" r="100.8" fill="#002776"/></svg></button>
+                        <button onclick="setLanguage('it')" id="m-lang-it" class="lang-btn"><svg viewBox="0 0 3 2"><rect width="1" height="2" x="0" fill="#009246"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ce2b37"/></svg></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="switchModule(0)" id="m-mod-0" class="mod-btn-m active">MOD 1</button>
+                    <button onclick="switchModule(1)" id="m-mod-1" class="mod-btn-m inactive bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">MOD 2</button>
+                    <button onclick="switchModule(2)" id="m-mod-2" class="mod-btn-m inactive bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">MOD 3</button>
+                    <button onclick="switchModule(3)" id="m-mod-3" class="mod-btn-m inactive bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">MOD 4</button>
+                </div>
+            </header>
+
+            <div class="max-w-5xl mx-auto p-4 lg:p-12 flex-grow">
+                <div id="module-header" class="mb-8 bg-white dark:bg-slate-900 p-6 md:p-10 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-50 dark:bg-indigo-900/20 rounded-full -mr-32 -mt-32 opacity-40"></div>
+                    <div class="relative z-10">
+                        <h1 id="module-title" class="text-2xl md:text-4xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tighter italic">Strategy</h1>
+                        <p id="module-desc" class="text-slate-500 dark:text-slate-400 text-sm md:text-lg font-medium leading-relaxed">...</p>
+                    </div>
+                </div>
+                <div id="prompts-container" class="space-y-6 md:space-y-10 pb-40"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURACIÓN DE IDIOMAS Y TEXTOS DE UI ---
+        const i18n = {
+            es: { mod1: "Módulo 1: Estrategia", mod2: "Módulo 2: Contenidos", mod3: "Módulo 3: Copywriting", mod4: "Módulo 4: Email Mkt", copied: "¡Copiado con éxito!", copyBtn: "Copiar Prompt", labelWrite: "Escribir...", badge: "MASTER PRO", footer: "Personaliza tus datos, copia el prompt y pégalo en tu IA preferida.", desc1: "Estrategia de Negocio y Psicología del Cliente", desc2: "Fábrica de Contenidos Virales", desc3: "Copywriting y Ventas Persuasivas", desc4: "Email Marketing y Automatización" },
+            en: { mod1: "Module 1: Strategy", mod2: "Module 2: Content", mod3: "Module 3: Copywriting", mod4: "Module 4: Email Mkt", copied: "Copied successfully!", copyBtn: "Copy Prompt", labelWrite: "Write here...", badge: "MASTER PRO", footer: "Customize your data, copy and paste into your favorite AI.", desc1: "Business Strategy & Customer Psychology", desc2: "Viral Content Factory", desc3: "Copywriting & Persuasive Sales", desc4: "Email Marketing & Automation" },
+            de: { mod1: "Modul 1: Strategie", mod2: "Modul 2: Inhalte", mod3: "Modul 3: Copywriting", mod4: "Modul 4: Email Mkt", copied: "Erfolgreich kopiert!", copyBtn: "Prompt kopieren", labelWrite: "Schreiben...", badge: "MASTER PRO", footer: "Daten anpassen, kopieren und in Ihre KI einfügen.", desc1: "Geschäftsstrategie & Kundenpsychologie", desc2: "Virale Content-Fabrik", desc3: "Werbetexten & Überzeugender Verkauf", desc4: "E-Mail-Marketing & Automatisierung" },
+            fr: { mod1: "Module 1 : Stratégie", mod2: "Module 2 : Contenu", mod3: "Module 3 : Copywriting", mod4: "Module 4 : Email Mkt", copied: "Copié avec succès !", copyBtn: "Copier le prompt", labelWrite: "Écrire...", badge: "MASTER PRO", footer: "Personnalisez, copiez et collez dans votre IA.", desc1: "Stratégie d'Entreprise & Psychologie Client", desc2: "Usine de Contenu Viral", desc3: "Copywriting & Vente Persuasive", desc4: "Email Marketing & Automatisation" },
+            pt: { mod1: "Módulo 1: Estratégia", mod2: "Módulo 2: Conteúdo", mod3: "Módulo 3: Copywriting", mod4: "Módulo 4: Email Mkt", copied: "Copiado com sucesso!", copyBtn: "Copiar Prompt", labelWrite: "Escrever...", badge: "MASTER PRO", footer: "Personalize seus dados, copie e cole na sua IA.", desc1: "Estratégia de Negócios e Psicologia", desc2: "Fábrica de Conteúdo Viral", desc3: "Copywriting e Vendas Persuasivas", desc4: "Email Marketing e Automação" },
+            it: { mod1: "Modulo 1: Strategia", mod2: "Modulo 2: Contenuti", mod3: "Modulo 3: Copywriting", mod4: "Modulo 4: Email Mkt", copied: "Copiato con successo!", copyBtn: "Copia Prompt", labelWrite: "Scrivere...", badge: "MASTER PRO", footer: "Personalizza, copia e incolla nella tua IA.", desc1: "Strategia Aziendale e Psicologia", desc2: "Fabbrica di Contenuti Virali", desc3: "Copywriting e Vendite Persuasive", desc4: "Email Marketing e Automazione" }
+        };
+
+        const varMap = {
+            es: { NICHO: "[NICHO]", PRODUCTO: "[PRODUCTO]", TEMA: "[TEMA]", OBJETIVO: "[OBJETIVO]", RED_SOCIAL: "[RED_SOCIAL]", PAIS_REGION: "[PAIS_REGION]", TIPO_DE_NEGOCIO: "[TIPO_DE_NEGOCIO]", PRECIO_ACTUAL: "[PRECIO_ACTUAL]", LISTA: "[LISTA]", TESTIMONIO: "[TESTIMONIO]", DOLOR: "[DOLOR]", BENEFICIO: "[BENEFICIO]", SERVICIO: "[SERVICIO]", CLIENTE: "[CLIENTE]", NOMBRE: "[NOMBRE]", CURSO: "[CURSO]", KEYWORD: "[KEYWORD]", PERFIL: "[PERFIL]", COMENTARIOS: "[COMENTARIOS]", PAIS: "[PAÍS]", INDUSTRIA: "[INDUSTRIA]", NOMBRE_MARCA: "[NOMBRE_MARCA]", COMPETIDOR: "[COMPETIDOR]", IDEA_NEGOCIO: "[IDEA_NEGOCIO]", VALORES: "[VALORES]", AÑO_ACTUAL: "[AÑO_ACTUAL]" },
+            en: { NICHO: "[NICHE]", PRODUCTO: "[PRODUCT]", TEMA: "[TOPIC]", OBJETIVO: "[GOAL]", RED_SOCIAL: "[SOCIAL_MEDIA]", PAIS_REGION: "[COUNTRY_REGION]", TIPO_DE_NEGOCIO: "[BUSINESS_TYPE]", PRECIO_ACTUAL: "[CURRENT_PRICE]", LISTA: "[LIST]", TESTIMONIO: "[TESTIMONIAL]", DOLOR: "[PAIN]", BENEFICIO: "[BENEFIT]", SERVICIO: "[SERVICE]", CLIENTE: "[CLIENT]", NOMBRE: "[NAME]", CURSO: "[COURSE]", KEYWORD: "[KEYWORD]", PERFIL: "[PROFILE]", COMENTARIOS: "[COMMENTS]", PAIS: "[COUNTRY]", INDUSTRIA: "[INDUSTRY]", NOMBRE_MARCA: "[BRAND_NAME]", COMPETIDOR: "[COMPETITOR]", IDEA_NEGOCIO: "[BUSINESS_IDEA]", VALORES: "[VALUES]", AÑO_ACTUAL: "[CURRENT_YEAR]" },
+            de: { NICHO: "[NISCHE]", PRODUCTO: "[PRODUKT]", TEMA: "[THEMA]", OBJETIVO: "[ZIEL]", RED_SOCIAL: "[SOZIALES_NETZWERK]", PAIS_REGION: "[LAND_REGION]", TIPO_DE_NEGOCIO: "[GESCHAEFTSART]", PRECIO_ACTUAL: "[AKTUELLER_PREIS]", LISTA: "[LISTE]", TESTIMONIO: "[TESTIMONIAL]", DOLOR: "[SCHMERZ]", BENEFICIO: "[NUTZEN]", SERVICIO: "[SERVICE]", CLIENTE: "[KUNDE]", NOMBRE: "[NAME]", CURSO: "[KURS]", KEYWORD: "[KEYWORD]", PERFIL: "[PROFIL]", COMENTARIOS: "[KOMMENTARE]", PAIS: "[LAND]", INDUSTRIA: "[BRANCHE]", NOMBRE_MARCA: "[MARKENNAME]", COMPETIDOR: "[WETTBEWERBER]", IDEA_NEGOCIO: "[GESCHÄFTSIDEE]", VALORES: "[WERTE]", AÑO_ACTUAL: "[AKTUELLES_JAHR]" },
+            fr: { NICHO: "[NICHE]", PRODUCTO: "[PRODUIT]", TEMA: "[SUJET]", OBJETIVO: "[OBJECTIF]", RED_SOCIAL: "[RESEAU_SOCIAL]", PAIS_REGION: "[PAYS_REGION]", TIPO_DE_NEGOCIO: "[TYPE_ENTREPRISE]", PRECIO_ACTUAL: "[PRIX_ACTUEL]", LISTA: "[LISTE]", TESTIMONIO: "[TEMOIGNAGE]", DOLOR: "[DOULEUR]", BENEFICIO: "[AVANTAGE]", SERVICIO: "[SERVICE]", CLIENTE: "[CLIENT]", NOMBRE: "[NOM]", CURSO: "[COURS]", KEYWORD: "[MOT_CLE]", PERFIL: "[PROFIL]", COMENTARIOS: "[COMMENTAIRES]", PAIS: "[PAYS]", INDUSTRIA: "[INDUSTRIE]", NOMBRE_MARCA: "[NOM_MARQUE]", COMPETIDOR: "[CONCURRENT]", IDEA_NEGOCIO: "[IDÉE_BUSINESS]", VALORES: "[VALEURS]", AÑO_ACTUAL: "[ANNÉE_ACTUELLE]" },
+            pt: { NICHO: "[NICHO]", PRODUCTO: "[PRODUTO]", TEMA: "[TEMA]", OBJETIVO: "[OBJETIVO]", RED_SOCIAL: "[REDE_SOCIAL]", PAIS_REGION: "[PAIS_REGIAO]", TIPO_DE_NEGOCIO: "[TIPO_NEGOCIO]", PRECIO_ACTUAL: "[PRECO_ATUAL]", LISTA: "[LISTA]", TESTIMONIO: "[DEPOIMENTO]", DOLOR: "[DOR]", BENEFICIO: "[BENEFICIO]", SERVICIO: "[SERVICO]", CLIENTE: "[CLIENTE]", NOMBRE: "[NOME]", CURSO: "[CURSO]", KEYWORD: "[PALAVRA_CHAVE]", PERFIL: "[PERFIL]", COMENTARIOS: "[COMENTARIOS]", PAIS: "[PAÍS]", INDUSTRIA: "[INDÚSTRIA]", NOMBRE_MARCA: "[NOME_DA_MARCA]", COMPETIDOR: "[CONCORRENTE]", IDEA_NEGOCIO: "[IDEIA_DE_NEGÓCIO]", VALORES: "[VALORES]", AÑO_ACTUAL: "[ANO_ATUAL]" },
+            it: { NICHO: "[NICCHIA]", PRODUCTO: "[PRODOTTO]", TEMA: "[ARGOMENTO]", OBJETIVO: "[OBIETTIVO]", RED_SOCIAL: "[SOCIAL_MEDIA]", PAIS_REGION: "[PAESE_REGIONE]", TIPO_DE_NEGOCIO: "[TIPO_BUSINESS]", PRECIO_ACTUAL: "[PREZZO_ATTUALE]", LISTA: "[LISTA]", TESTIMONIO: "[TESTIMONIANZA]", DOLOR: "[DOLORE]", BENEFICIO: "[BENEFICIO]", SERVICIO: "[SERVIZIO]", CLIENTE: "[CLIENTE]", NOMBRE: "[NOME]", CURSO: "[CORSO]", KEYWORD: "[PAROLA_CHIAVE]", PERFIL: "[PROFILO]", COMENTARIOS: "[COMMENTI]", PAIS: "[PAESE]", INDUSTRIA: "[INDUSTRIA]", NOMBRE_MARCA: "[NOME_MARCHIO]", COMPETIDOR: "[CONCORRENTE]", IDEA_NEGOCIO: "[IDEA_BUSINESS]", VALORES: "[VALORI]", AÑO_ACTUAL: "[ANNO_CORRENTE]" }
+        };
+
+        // BASE DE DATOS DE 120 PROMPTS REALES
+        const promptDB = [
+            // --- MÓDULO 1: ESTRATEGIA (1-30) ---
+            { mod: 0, id: 1, name: {es: "1. Avatar 360", en: "1. Avatar 360", pt: "1. Avatar 360", de: "1. Avatar 360", fr: "1. Avatar 360", it: "1. Avatar 360"}, 
+              text: {
+                es: "Actúa como experto en marketing. Crea un perfil de cliente ideal para [NICHO]. Incluye: datos demográficos, 5 intereses principales, 5 comportamientos de compra, a quién siguen en redes sociales y qué libros leen.",
+                en: "Act as a marketing expert. Create an ideal customer profile for [NICHE]. Include: demographics, 5 main interests, 5 buying behaviors, who they follow on social media, and what books they read.",
+                pt: "Atue como especialista em marketing. Crie um perfil de cliente ideal para [NICHO]. Inclua: dados demográficos, 5 principais interesses, 5 comportamentos de compra, quem eles seguem nas redes sociais e quais livros leem.",
+                de: "Handeln Sie als Marketing-Experte. Erstellen Sie ein ideales Kundenprofil für [NISCHE]. Enthalten Sie: Demografie, 5 Hauptinteressen, 5 Kaufverhaltensweisen, wem sie in sozialen Medien folgen und welche Bücher sie lesen.",
+                fr: "Agissez en tant qu'expert en marketing. Créez un profil de client idéal pour [NICHE]. Incluez : données démographiques, 5 intérêts principaux, 5 comportements d'achat, qui ils suivent sur les réseaux sociaux et quels livres ils lisent.",
+                it: "Agisci come esperto di marketing. Crea un profilo cliente ideale per [NICCHIA]. Includi: dati demografici, 5 interessi principali, 5 comportamenti d'acquisto, chi seguono sui social media e quali libri leggono."
+            }},
+            { mod: 0, id: 2, name: {es: "2. Matriz Dolores", en: "2. Pain Matrix", pt: "2. Matriz de Dores", de: "2. Schmerzmatrix", fr: "2. Matrice Douleurs", it: "2. Matrice Dolori"}, 
+              text: {
+                es: "Para mi producto [PRODUCTO], crea una tabla de dos columnas. Columna 1: 'Puntos de Dolor' (lo que les frustra hoy). Columna 2: 'Puntos de Placer' (lo que sentirán al solucionarlo). Dame 10 filas.",
+                en: "For my product [PRODUCT], create a two-column table. Column 1: 'Pain Points' (what frustrates them today). Column 2: 'Pleasure Points' (what they will feel when solving it). Give me 10 rows.",
+                pt: "Para o meu produto [PRODUTO], crie uma tabela de duas colunas. Coluna 1: 'Pontos de Dor' (o que os frustra hoje). Coluna 2: 'Pontos de Prazer' (o que sentirão ao solucioná-lo). Dê-me 10 linhas.",
+                de: "Erstellen Sie für mein Produkt [PRODUKT] eine zweispaltige Tabelle. Spalte 1: 'Schmerzpunkte' (was sie heute frustriert). Spalte 2: 'Genusspunkte' (was sie nach der Lösung fühlen werden). Geben Sie mir 10 Zeilen.",
+                fr: "Pour mon produit [PRODUIT], créez un tableau à deux colonnes. Colonne 1 : 'Points de douleur' (ce qui les frustre aujourd'hui). Colonne 2 : 'Points de plaisir' (ce qu'ils ressentiront en le résolvant). Donnez-moi 10 lignes.",
+                it: "Per il mio prodotto [PRODOTTO], crea una tabella a due colonne. Colonna 1: 'Punti di Dolore' (ciò che li frustra oggi). Colonna 2: 'Punti di Piacere' (ciò che proveranno risolvendolo). Dammi 10 righe."
+            }},
+            { mod: 0, id: 3, name: {es: "3. Análisis FODA", en: "3. SWOT Analysis", pt: "3. Análise SWOT", de: "3. SWOT-Analyse", fr: "3. Analyse SWOT", it: "3. Analisi SWOT"}, 
+              text: {
+                es: "Haz un análisis FODA (Fortalezas, Oportunidades, Debilidades, Amenazas) para un negocio de [TIPO_DE_NEGOCIO] que compite en el mercado de [PAIS_REGION].",
+                en: "Perform a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats) for a [BUSINESS_TYPE] business competing in the [COUNTRY_REGION] market.",
+                pt: "Faça uma análise SWOT (Forças, Fraquezas, Oportunidades, Ameaças) para um negócio de [TIPO_NEGOCIO] que compete no mercado de [PAIS_REGIAO].",
+                de: "Führen Sie eine SWOT-Analyse (Stärken, Schwächen, Chancen, Risiken) für ein [GESCHAEFTSART]-Unternehmen durch, das auf dem Markt [LAND_REGION] konkurriert.",
+                fr: "Faites une analyse SWOT (Forces, Faiblesses, Opportunités, Menaces) pour une entreprise de [TYPE_ENTREPRISE] en concurrence sur le marché de [PAYS_REGION].",
+                it: "Esegui un'analisi SWOT (Punti di forza, Debolezze, Opportunità, Minacce) per un'attività di [TIPO_BUSINESS] che compete nel mercato di [PAESE_REGIONE]."
+            }},
+            { mod: 0, id: 4, name: {es: "4. Naming Branding", en: "4. Brand Naming", pt: "4. Nomes de Marca", de: "4. Markennamen", fr: "4. Noms de Marque", it: "4. Naming Brand"}, 
+              text: {
+                es: "Necesito 20 nombres para mi nuevo [PRODUCTO/CURSO]. El tono debe ser [TONO: EJ. PREMIUM, DIVERTIDO, DISRUPTIVO]. Evita clichés.",
+                en: "I need 20 names for my new [PRODUCT/COURSE]. The tone should be [TONE: E.G. PREMIUM, FUN, DISRUPTIVE]. Avoid clichés.",
+                pt: "Preciso de 20 nomes para meu novo [PRODUTO/CURSO]. O tom deve ser [TOM: EX. PREMIUM, DIVERTIDO, DISRUPTIVO]. Evite clichês.",
+                de: "Ich brauche 20 Namen für mein neues [PRODUKT/KURS]. Der Ton sollte [TON: Z.B. PREMIUM, LUSTIG, DISRUPTIV] sein. Vermeiden Sie Klischees.",
+                fr: "J'ai besoin de 20 noms pour mon nouveau [PRODUIT/COURS]. Le ton doit être [TON : EX. PREMIUM, AMUSANT, DISRUPTIF]. Évitez les clichés.",
+                it: "Ho bisogno di 20 nomi per il mio nuovo [PRODOTTO/CORSO]. Il tono deve essere [TONO: ES. PREMIUM, DIVERTENTE, DIROMPENTE]. Evita i cliché."
+            }},
+            { mod: 0, id: 5, name: {es: "5. Estratega Precios", en: "5. Pricing Strategist", pt: "5. Estrategista de Preços", de: "5. Preisstrategie", fr: "5. Stratège Prix", it: "5. Strategia Prezzi"}, 
+              text: {
+                es: "Actúa como consultor de precios. Tengo un producto de [PRECIO_ACTUAL]. Dame 3 estrategias psicológicas para aumentar el valor percibido sin bajar el precio (ej: bonus, garantías, urgencia).",
+                en: "Act as a pricing consultant. I have a product priced at [CURRENT_PRICE]. Give me 3 psychological strategies to increase perceived value without lowering the price (e.g., bonuses, guarantees, urgency).",
+                pt: "Atue como consultor de preços. Tenho um produto de [PRECO_ATUAL]. Dê-me 3 estratégias psicológicas para aumentar o valor percebido sem baixar o preço (ex: bônus, garantias, urgência).",
+                de: "Handeln Sie als Preisberater. Ich habe ein Produkt für [AKTUELLER_PREIS]. Geben Sie mir 3 psychologische Strategien, um den wahrgenommenen Wert zu steigern, ohne den Preis zu senken (z.B. Boni, Garantien, Dringlichkeit).",
+                fr: "Agissez en tant que consultant en prix. J'ai un produit à [PRIX_ACTUEL]. Donnez-moi 3 stratégies psychologiques pour augmenter la valeur perçue sans baisser le prix (ex: bonus, garanties, urgence).",
+                it: "Agisci come consulente di prezzi. Ho un prodotto a [PREZZO_ATTUALE]. Dammi 3 strategie psicologiche per aumentare il valore percepito senza abbassare il prezzo (es: bonus, garanzie, urgenza)."
+            }},
+            { mod: 0, id: 6, name: {es: "6. Océanos Azules", en: "6. Blue Oceans", pt: "6. Oceanos Azuis", de: "6. Blaue Ozeane", fr: "6. Océans Bleus", it: "6. Oceani Blu"}, 
+              text: {
+                es: "Analiza el mercado de [NICHO]. Dime 3 sub-nichos o ángulos desatendidos donde haya poca competencia pero alta demanda.",
+                en: "Analyze the [NICHE] market. Tell me 3 underserved sub-niches or angles where there is low competition but high demand.",
+                pt: "Analise o mercado de [NICHO]. Diga-me 3 sub-nichos ou ângulos pouco atendidos onde há pouca concorrência, mas alta demanda.",
+                de: "Analysieren Sie den Markt für [NISCHE]. Nennen Sie mir 3 unterversorgte Sub-Nischen oder Blickwinkel, in denen wenig Wettbewerb, aber hohe Nachfrage herrscht.",
+                fr: "Analysez le marché de [NICHE]. Dites-moi 3 sous-niches ou angles négligés où il y a peu de concurrence mais une forte demande.",
+                it: "Analizza il mercato di [NICCHIA]. Dimmi 3 sotto-nicchie o angoli trascurati dove c'è poca concorrenza ma alta domanda."
+            }},
+            { mod: 0, id: 7, name: {es: "7. Escalera de Valor", en: "7. Value Ladder", pt: "7. Escada de Valor", de: "7. Wertleiter", fr: "7. Échelle de Valeur", it: "7. Scala del Valore"}, 
+              text: {
+                es: "Diseña una escalera de valor para mi negocio. Empieza con un Lead Magnet gratuito, sigue con un producto 'Tripwire' barato ($7-$27), un producto principal ($97-$297) y un servicio High Ticket ($1000+).",
+                en: "Design a value ladder for my business. Start with a free Lead Magnet, follow with a cheap 'Tripwire' product ($7-$27), a core product ($97-$297), and a High Ticket service ($1000+).",
+                pt: "Projete uma escada de valor para o meu negócio. Comece com um Lead Magnet gratuito, siga com um produto 'Tripwire' barato ($7-$27), um produto principal ($97-$297) e um serviço High Ticket ($1000+).",
+                de: "Entwerfen Sie eine Wertleiter für mein Unternehmen. Beginnen Sie mit einem kostenlosen Lead Magnet, gefolgt von einem günstigen 'Tripwire'-Produkt ($7-$27), einem Hauptprodukt ($97-$297) und einem High-Ticket-Service ($1000+).",
+                fr: "Concevez une échelle de valeur pour mon entreprise. Commencez par un Lead Magnet gratuit, suivez avec un produit 'Tripwire' bon marché (7-27 $), un produit principal (97-297 $) et un service High Ticket (1000 $ +).",
+                it: "Progetta una scala del valore per la mia attività. Inizia con un Lead Magnet gratuito, segui con un prodotto 'Tripwire' economico ($7-$27), un prodotto principale ($97-$297) e un servizio High Ticket ($1000+)."
+            }},
+            { mod: 0, id: 8, name: {es: "8. Objeciones", en: "8. Deep Objections", pt: "8. Objeções Profundas", de: "8. Tiefe Einwände", fr: "8. Objections Profondes", it: "8. Obiezioni Profonde"}, 
+              text: {
+                es: "Dime las 10 razones 'no dichas' por las que alguien NO compraría [PRODUCTO]. No me digas 'dinero', dime cosas como 'miedo a fallar' o 'qué dirá mi esposa'.",
+                en: "Tell me the 10 'unspoken' reasons why someone would NOT buy [PRODUCT]. Don't say 'money', tell me things like 'fear of failure' or 'what my spouse will say'.",
+                pt: "Diga-me as 10 razões 'não ditas' pelas quais alguém NÃO compraria [PRODUTO]. Não diga 'dinheiro', diga coisas como 'medo de falhar' ou 'o que minha esposa dirá'.",
+                de: "Nennen Sie mir die 10 'unausgesprochenen' Gründe, warum jemand [PRODUKT] NICHT kaufen würde. Sagen Sie nicht 'Geld', sondern Dinge wie 'Angst vor dem Scheitern' oder 'was mein Ehepartner sagen wird'.",
+                fr: "Dites-moi les 10 raisons 'non-dites' pour lesquelles quelqu'un n'achèterait PAS [PRODUIT]. Ne dites pas 'argent', dites des choses comme 'peur de l'échec' ou 'ce que dira mon conjoint'.",
+                it: "Dimmi i 10 motivi 'non detti' per cui qualcuno NON comprerebbe [PRODOTTO]. Non dire 'soldi', dimmi cose come 'paura di fallire' o 'cosa dirà mia moglie'."
+            }},
+            { mod: 0, id: 9, name: {es: "9. Garantías", en: "9. Guarantee Creator", pt: "9. Criador de Garantias", de: "9. Garantie-Ersteller", fr: "9. Créateur de Garanties", it: "9. Creatore di Garanzie"}, 
+              text: {
+                es: "Redacta 3 opciones de garantías 'locas' (Risk Reversal) para [PRODUCTO] que eliminen todo el riesgo para el cliente.",
+                en: "Write 3 'crazy' guarantee options (Risk Reversal) for [PRODUCT] that eliminate all risk for the customer.",
+                pt: "Escreva 3 opções de garantias 'loucas' (Reversão de Risco) para [PRODUTO] que eliminem todo o risco para o cliente.",
+                de: "Verfassen Sie 3 'verrückte' Garantieoptionen (Risikoumkehr) für [PRODUKT], die das gesamte Risiko für den Kunden beseitigen.",
+                fr: "Rédigez 3 options de garanties 'folles' (Inversion de Risque) pour [PRODUIT] qui éliminent tout risque pour le client.",
+                it: "Scrivi 3 opzioni di garanzie 'folli' (Inversione del Rischio) per [PRODOTTO] che eliminino ogni rischio per il cliente."
+            }},
+            { mod: 0, id: 10, name: {es: "10. Tendencias", en: "10. Trends", pt: "10. Tendências", de: "10. Trends", fr: "10. Tendances", it: "10. Tendenze"}, 
+              text: {
+                es: "Actúa como un cazador de tendencias. Lista 5 tendencias emergentes en [AÑO_ACTUAL] para la industria de [INDUSTRIA] y cómo puedo aprovecharlas.",
+                en: "Act as a trend hunter. List 5 emerging trends in [CURRENT_YEAR] for the [INDUSTRY] industry and how I can leverage them.",
+                pt: "Atue como um caçador de tendências. Liste 5 tendências emergentes em [ANO_ATUAL] para a indústria de [INDUSTRIA] e como posso aproveitá-las.",
+                de: "Handeln Sie als Trendjäger. Listen Sie 5 aufkommende Trends im Jahr [AKTUELLES_JAHR] für die [INDUSTRIE]-Branche auf und wie ich sie nutzen kann.",
+                fr: "Agissez en tant que chasseur de tendances. Listez 5 tendances émergentes en [ANNEE_ACTUELLE] pour l'industrie de [INDUSTRIE] et comment je peux les exploiter.",
+                it: "Agisci come un cacciatore di tendenze. Elenca 5 tendenze emergenti nel [ANNO_CORRENTE] per l'industria di [INDUSTRIA] e come posso sfruttarle."
+            }},
+            { mod: 0, id: 11, name: {es: "11. Misión y Visión", en: "11. Mission & Vision", pt: "11. Missão e Visão", de: "11. Mission & Vision", fr: "11. Mission & Vision", it: "11. Missione & Visione"}, 
+              text: {
+                es: "Crea una misión y visión poderosa para mi marca [NOMBRE_MARCA], que vende [PRODUCTO]. El tono debe ser inspirador y centrado en el impacto social.",
+                en: "Create a powerful mission and vision for my brand [BRAND_NAME], which sells [PRODUCT]. The tone should be inspiring and focused on social impact.",
+                pt: "Crie uma missão e visão poderosa para minha marca [NOME_MARCA], que vende [PRODUTO]. O tom deve ser inspirador e focado no impacto social.",
+                de: "Erstellen Sie eine kraftvolle Mission und Vision für meine Marke [MARKENNAME], die [PRODUKT] verkauft. Der Ton sollte inspirierend sein und sich auf soziale Auswirkungen konzentrieren.",
+                fr: "Créez une mission et une vision puissantes pour ma marque [NOM_MARQUE], qui vend [PRODUIT]. Le ton doit être inspirant et axé sur l'impact social.",
+                it: "Crea una missione e una visione potenti per il mio marchio [NOME_BRAND], che vende [PRODOTTO]. Il tono deve essere stimolante e incentrato sull'impatto sociale."
+            }},
+            { mod: 0, id: 12, name: {es: "12. Propuesta Valor", en: "12. USP", pt: "12. Proposta Valor", de: "12. USP", fr: "12. Proposition Valeur", it: "12. Proposta Valore"}, 
+              text: {
+                es: "Escribe mi 'Propuesta Única de Venta' usando la fórmula: Ayudo a [AUDIENCIA] a lograr [RESULTADO] a través de [MÉTODO] sin [DOLOR_PRINCIPAL].",
+                en: "Write my 'Unique Selling Proposition' using the formula: I help [AUDIENCE] achieve [RESULT] through [METHOD] without [MAIN_PAIN].",
+                pt: "Escreva minha 'Proposta Única de Venda' usando a fórmula: Ajudo [AUDIENCIA] a alcançar [RESULTADO] através de [MÉTODO] sem [DOR_PRINCIPAL].",
+                de: "Schreiben Sie mein 'Alleinstellungsmerkmal' nach der Formel: Ich helfe [ZIELGRUPPE], [ERGEBNIS] durch [METHODE] zu erreichen, ohne [HAUPTSCHMERZ].",
+                fr: "Écrivez ma 'Proposition Unique de Vente' en utilisant la formule : J'aide [AUDIENCE] à atteindre [RESULTAT] grâce à [METHODE] sans [DOULEUR_PRINCIPALE].",
+                it: "Scrivi la mia 'Proposta Unica di Vendita' usando la formula: Aiuto [PUBBLICO] a raggiungere [RISULTATO] attraverso [METODO] senza [DOLORE_PRINCIPALE]."
+            }},
+            { mod: 0, id: 13, name: {es: "13. Análisis Competencia", en: "13. Competitor Analysis", pt: "13. Análise Concorrência", de: "13. Wettbewerbsanalyse", fr: "13. Analyse Concurrents", it: "13. Analisi Concorrenza"}, 
+              text: {
+                es: "Investiga y lista las 5 principales debilidades de los cursos o productos de [COMPETIDOR_O_CATEGORIA] y cómo mi producto puede superarlos.",
+                en: "Investigate and list the top 5 weaknesses of [COMPETITOR_OR_CATEGORY] courses or products and how my product can overcome them.",
+                pt: "Pesquise e liste as 5 principais fraquezas dos cursos ou produtos de [CONCORRENTE_OU_CATEGORIA] e como meu produto pode superá-las.",
+                de: "Untersuchen und listen Sie die 5 Hauptschwächen der Kurse oder Produkte von [WETTBEWERBER_ODER_KATEGORIE] auf und wie mein Produkt diese überwinden kann.",
+                fr: "Recherchez et listez les 5 principales faiblesses des cours ou produits de [CONCURRENT_OU_CATEGORIE] et comment mon produit peut les surmonter.",
+                it: "Indaga ed elenca le 5 principali debolezze dei corsi o prodotti di [CONCORRENTE_O_CATEGORIA] e come il mio prodotto può superarle."
+            }},
+            { mod: 0, id: 14, name: {es: "14. Arquetipo Marca", en: "14. Brand Archetype", pt: "14. Arquétipo Marca", de: "14. Markenarchetyp", fr: "14. Archétype Marque", it: "14. Archetipo Marca"}, 
+              text: {
+                es: "Basado en [VALORES_DE_MARCA], define cuál de los 12 arquetipos de Jung (El Héroe, El Sabio, El Rebelde, etc.) encaja mejor con mi negocio y cómo debe hablar.",
+                en: "Based on [BRAND_VALUES], define which of Jung's 12 archetypes (The Hero, The Sage, The Rebel, etc.) best fits my business and how it should speak.",
+                pt: "Com base em [VALORES_DA_MARCA], defina qual dos 12 arquétipos de Jung (O Herói, O Sábio, O Rebelde, etc.) melhor se adapta ao meu negócio e como deve falar.",
+                de: "Definieren Sie basierend auf [MARKENWERTE], welcher der 12 Jungschen Archetypen (Der Held, Der Weise, Der Rebell usw.) am besten zu meinem Unternehmen passt und wie er sprechen sollte.",
+                fr: "Basé sur [VALEURS_MARQUE], définissez lequel des 12 archétypes de Jung (Le Héros, Le Sage, Le Rebelle, etc.) correspond le mieux à mon entreprise et comment elle doit parler.",
+                it: "Basandoti su [VALORI_DEL_BRAND], definisci quale dei 12 archetipi di Jung (L'Eroe, Il Saggio, Il Ribelle, ecc.) si adatta meglio alla mia attività e come dovrebbe parlare."
+            }},
+            { mod: 0, id: 15, name: {es: "15. Business Canvas", en: "15. Business Canvas", pt: "15. Business Canvas", de: "15. Business Canvas", fr: "15. Business Canvas", it: "15. Business Canvas"}, 
+              text: {
+                es: "Genera un Business Model Canvas completo para una startup de [IDEA_NEGOCIO]. Define socios clave, canales, y flujo de ingresos.",
+                en: "Generate a complete Business Model Canvas for a [BUSINESS_IDEA] startup. Define key partners, channels, and revenue streams.",
+                pt: "Gere um Business Model Canvas completo para uma startup de [IDEIA_DE_NEGOCIO]. Defina parceiros-chave, canais e fluxos de receita.",
+                de: "Erstellen Sie ein vollständiges Business Model Canvas für ein [GESCHAEFTSIDEE]-Startup. Definieren Sie Schlüsselpartner, Kanäle und Einnahmequellen.",
+                fr: "Générez un Business Model Canvas complet pour une startup de [IDEE_BUSINESS]. Définissez les partenaires clés, les canaux et les flux de revenus.",
+                it: "Genera un Business Model Canvas completo per una startup di [IDEA_DI_BUSINESS]. Definisci partner chiave, canali e flussi di entrate."
+            }},
+            { mod: 0, id: 16, name: {es: "16. Tamaño Mercado", en: "16. Market Size", pt: "16. Tamanho Mercado", de: "16. Marktgröße", fr: "16. Taille Marché", it: "16. Dimensione Mercato"}, 
+              text: {
+                es: "Actúa como analista financiero. Estima el tamaño del mercado para [PRODUCTO] en [REGION] y explica el potencial de crecimiento.",
+                en: "Act as a financial analyst. Estimate the market size for [PRODUCT] in [REGION] and explain the growth potential.",
+                pt: "Atue como analista financeiro. Estime o tamanho do mercado para [PRODUTO] em [REGIAO] e explique o potencial de crescimento.",
+                de: "Handeln Sie als Finanzanalyst. Schätzen Sie die Marktgröße für [PRODUKT] in [REGION] und erklären Sie das Wachstumspotenzial.",
+                fr: "Agissez en tant qu'analyste financier. Estimez la taille du marché pour [PRODUIT] dans [REGION] et expliquez le potentiel de croissance.",
+                it: "Agisci come analista finanziario. Stima la dimensione del mercato per [PRODOTTO] in [REGIONE] e spiega il potenziale di crescita."
+            }},
+            { mod: 0, id: 17, name: {es: "17. Branding Visual", en: "17. Visual Branding", pt: "17. Branding Visual", de: "17. Visuelles Branding", fr: "17. Branding Visuel", it: "17. Branding Visivo"}, 
+              text: {
+                es: "Dime qué psicología de colores y tipografías debería usar para una marca que quiere transmitir [EMOCIÓN: EJ. CONFIANZA, ENERGÍA, LUJO].",
+                en: "Tell me what color psychology and typography I should use for a brand that wants to convey [EMOTION: E.G. TRUST, ENERGY, LUXURY].",
+                pt: "Diga-me qual psicologia das cores e tipografias eu deveria usar para uma marca que quer transmitir [EMOCAO: EX. CONFIANCA, ENERGIA, LUXO].",
+                de: "Sagen Sie mir, welche Farbpsychologie und Typografie ich für eine Marke verwenden sollte, die [EMOTION: Z.B. VERTRAUEN, ENERGIE, LUXUS] vermitteln möchte.",
+                fr: "Dites-moi quelle psychologie des couleurs et quelles typographies je devrais utiliser pour une marque qui veut transmettre [EMOTION : EX. CONFIANCE, ENERGIE, LUXE].",
+                it: "Dimmi quale psicologia dei colori e tipografia dovrei usare per un marchio che vuole trasmettere [EMOZIONE: ES. FIDUCIA, ENERGIA, LUSSO]."
+            }},
+            { mod: 0, id: 18, name: {es: "18. Mapa Empatía", en: "18. Empathy Map", pt: "18. Mapa Empatia", de: "18. Empathiekarte", fr: "18. Carte Empathie", it: "18. Mappa Empatia"}, 
+              text: {
+                es: "Crea un Mapa de Empatía para mi avatar. ¿Qué ve?, ¿Qué oye?, ¿Qué piensa realmente?, ¿Qué dice y hace?",
+                en: "Create an Empathy Map for my avatar. What do they see? What do they hear? What do they really think? What do they say and do?",
+                pt: "Crie um Mapa de Empatia para meu avatar. O que ele vê? O que ele ouve? O que ele realmente pensa? O que ele diz e faz?",
+                de: "Erstellen Sie eine Empathiekarte für meinen Avatar. Was sieht er? Was hört er? Was denkt er wirklich? Was sagt und tut er?",
+                fr: "Créez une Carte d'Empathie pour mon avatar. Que voit-il ? Qu'entend-il ? Que pense-t-il vraiment ? Que dit-il et fait-il ?",
+                it: "Crea una Mappa dell'Empatia per il mio avatar. Cosa vede? Cosa sente? Cosa pensa veramente? Cosa dice e fa?"
+            }},
+            { mod: 0, id: 19, name: {es: "19. Networking", en: "19. Networking", pt: "19. Networking", de: "19. Networking", fr: "19. Networking", it: "19. Networking"}, 
+              text: {
+                es: "Dame un plan de 5 pasos para contactar a influencers o socios en el nicho de [NICHO] para una colaboración estratégica.",
+                en: "Give me a 5-step plan to contact influencers or partners in the [NICHE] niche for a strategic collaboration.",
+                pt: "Dê-me um plano de 5 passos para contatar influenciadores ou parceiros no nicho de [NICHO] para uma colaboração estratégica.",
+                de: "Geben Sie mir einen 5-Schritte-Plan, um Influencer oder Partner in der [NISCHE]-Nische für eine strategische Zusammenarbeit zu kontaktieren.",
+                fr: "Donnez-moi un plan en 5 étapes pour contacter des influenceurs ou des partenaires dans la niche [NICHE] pour une collaboration stratégique.",
+                it: "Dammi un piano in 5 passaggi per contattare influencer o partner nella nicchia di [NICCHIA] per una collaborazione strategica."
+            }},
+            { mod: 0, id: 20, name: {es: "20. OKRs", en: "20. OKRs", pt: "20. OKRs", de: "20. OKRs", fr: "20. OKRs", it: "20. OKR"}, 
+              text: {
+                es: "Ayúdame a definir 3 Objetivos y 9 Resultados Clave (OKRs) para mi negocio de [TIPO] para los próximos 90 días.",
+                en: "Help me define 3 Objectives and 9 Key Results (OKRs) for my [TYPE] business for the next 90 days.",
+                pt: "Ajude-me a definir 3 Objetivos e 9 Resultados-Chave (OKRs) para o meu negócio de [TIPO] para os próximos 90 dias.",
+                de: "Helfen Sie mir, 3 Ziele und 9 Schlüsselergebnisse (OKRs) für mein [TYP]-Geschäft für die nächsten 90 Tage zu definieren.",
+                fr: "Aidez-moi à définir 3 Objectifs et 9 Résultats Clés (OKRs) pour mon entreprise de [TYPE] pour les 90 prochains jours.",
+                it: "Aiutami a definire 3 Obiettivi e 9 Risultati Chiave (OKR) per la mia attività di [TIPO] per i prossimi 90 giorni."
+            }},
+            { mod: 0, id: 21, name: {es: "21. Psicología Color", en: "21. Color Psych", pt: "21. Psicologia Cor", de: "21. Farbpsychologie", fr: "21. Psycho Couleur", it: "21. Psico Colore"}, 
+              text: {
+                es: "Analiza mi nicho [NICHO]. ¿Qué paleta de colores debería tener mi página de ventas para maximizar las conversiones?",
+                en: "Analyze my niche [NICHE]. What color palette should my sales page have to maximize conversions?",
+                pt: "Analise meu nicho [NICHO]. Qual paleta de cores minha página de vendas deve ter para maximizar conversões?",
+                de: "Analysieren Sie meine Nische [NISCHE]. Welche Farbpalette sollte meine Verkaufsseite haben, um Konversionen zu maximieren?",
+                fr: "Analysez ma niche [NICHE]. Quelle palette de couleurs ma page de vente devrait-elle avoir pour maximiser les conversions ?",
+                it: "Analizza la mia nicchia [NICCHIA]. Quale tavolozza di colori dovrebbe avere la mia pagina di vendita per massimizzare le conversioni?"
+            }},
+            { mod: 0, id: 22, name: {es: "22. Storybrand", en: "22. Storybrand", pt: "22. Storybrand", de: "22. Storybrand", fr: "22. Storybrand", it: "22. Storybrand"}, 
+              text: {
+                es: "Aplica el framework de Donald Miller (Storybrand) a mi marca [MARCA]. El cliente es el héroe, yo soy el guía. Crea el guion.",
+                en: "Apply Donald Miller's framework (Storybrand) to my brand [BRAND]. The customer is the hero, I am the guide. Create the script.",
+                pt: "Aplique o framework de Donald Miller (Storybrand) à minha marca [MARCA]. O cliente é o herói, eu sou o guia. Crie o roteiro.",
+                de: "Wenden Sie Donald Millers Framework (Storybrand) auf meine Marke [MARKE] an. Der Kunde ist der Held, ich bin der Führer. Erstellen Sie das Skript.",
+                fr: "Appliquez le cadre de Donald Miller (Storybrand) à ma marque [MARQUE]. Le client est le héros, je suis le guide. Créez le script.",
+                it: "Applica il framework di Donald Miller (Storybrand) al mio marchio [BRAND]. Il cliente è l'eroe, io sono la guida. Crea lo script."
+            }},
+            { mod: 0, id: 23, name: {es: "23. Market Fit", en: "23. Market Fit", pt: "23. Market Fit", de: "23. Market Fit", fr: "23. Market Fit", it: "23. Market Fit"}, 
+              text: {
+                es: "Dime 5 preguntas clave que debo hacer a mis clientes actuales para saber si mi producto [PRODUCTO] realmente soluciona su problema.",
+                en: "Tell me 5 key questions I should ask my current customers to know if my product [PRODUCT] really solves their problem.",
+                pt: "Diga-me 5 perguntas chave que devo fazer aos meus clientes atuais para saber se meu produto [PRODUTO] realmente resolve o problema deles.",
+                de: "Nennen Sie mir 5 Schlüsselfragen, die ich meinen aktuellen Kunden stellen sollte, um zu wissen, ob mein Produkt [PRODUKT] ihr Problem wirklich löst.",
+                fr: "Dites-moi 5 questions clés que je devrais poser à mes clients actuels pour savoir si mon produit [PRODUIT] résout vraiment leur problème.",
+                it: "Dimmi 5 domande chiave che dovrei porre ai miei attuali clienti per sapere se il mio prodotto [PRODOTTO] risolve davvero il loro problema."
+            }},
+            { mod: 0, id: 24, name: {es: "24. Pivotaje", en: "24. Pivot", pt: "24. Pivô", de: "24. Pivot", fr: "24. Pivot", it: "24. Pivot"}, 
+              text: {
+                es: "Mi negocio actual de [PRODUCTO] está estancado. Dame 3 ideas disruptivas para pivotar el modelo de negocio sin cambiar de nicho.",
+                en: "My current [PRODUCT] business is stagnant. Give me 3 disruptive ideas to pivot the business model without changing niche.",
+                pt: "Meu negócio atual de [PRODUTO] está estagnado. Dê-me 3 ideias disruptivas para pivotar o modelo de negócio sem mudar de nicho.",
+                de: "Mein aktuelles [PRODUKT]-Geschäft stagniert. Geben Sie mir 3 disruptive Ideen, um das Geschäftsmodell zu ändern, ohne die Nische zu wechseln.",
+                fr: "Mon entreprise actuelle de [PRODUIT] stagne. Donnez-moi 3 idées disruptives pour faire pivoter le modèle économique sans changer de niche.",
+                it: "La mia attuale attività di [PRODOTTO] è stagnante. Dammi 3 idee dirompenti per fare un pivot del modello di business senza cambiare nicchia."
+            }},
+            { mod: 0, id: 25, name: {es: "25. Preventa", en: "25. Pre-sale", pt: "25. Pré-venda", de: "25. Vorverkauf", fr: "25. Pré-vente", it: "25. Pre-vendita"}, 
+              text: {
+                es: "Diseña un plan de 'Lista de Espera' para el lanzamiento de mi nuevo [PRODUCTO] que genere hype antes de abrir puertas.",
+                en: "Design a 'Waitlist' plan for the launch of my new [PRODUCT] that generates hype before opening doors.",
+                pt: "Projete um plano de 'Lista de Espera' para o lançamento do meu novo [PRODUTO] que gere hype antes de abrir as portas.",
+                de: "Entwerfen Sie einen 'Wartelisten'-Plan für den Start meines neuen [PRODUKT], der Hype erzeugt, bevor die Türen geöffnet werden.",
+                fr: "Concevez un plan de 'Liste d'Attente' pour le lancement de mon nouveau [PRODUIT] qui génère de la hype avant l'ouverture des portes.",
+                it: "Progetta un piano 'Lista d'Attesa' per il lancio del mio nuovo [PRODOTTO] che generi hype prima di aprire le porte."
+            }},
+            { mod: 0, id: 26, name: {es: "26. Tono de Voz", en: "26. Tone of Voice", pt: "26. Tom de Voz", de: "26. Tonfall", fr: "26. Ton de Voix", it: "26. Tono di Voce"}, 
+              text: {
+                es: "Crea una guía de estilo de voz para mi marca. Define qué palabras usamos frecuentemente y qué palabras están prohibidas.",
+                en: "Create a voice style guide for my brand. Define which words we use frequently and which words are forbidden.",
+                pt: "Crie um guia de estilo de voz para minha marca. Defina quais palavras usamos frequentemente e quais palavras são proibidas.",
+                de: "Erstellen Sie einen Sprachstil-Leitfaden für meine Marke. Definieren Sie, welche Wörter wir häufig verwenden und welche Wörter verboten sind.",
+                fr: "Créez un guide de style vocal pour ma marque. Définissez quels mots nous utilisons fréquemment et quels mots sont interdits.",
+                it: "Crea una guida allo stile vocale per il mio marchio. Definisci quali parole usiamo frequentemente e quali parole sono proibite."
+            }},
+            { mod: 0, id: 27, name: {es: "27. Riesgos", en: "27. Risks", pt: "27. Riscos", de: "27. Risiken", fr: "27. Risques", it: "27. Rischi"}, 
+              text: {
+                es: "Actúa como gestor de riesgos. Lista 5 posibles crisis que mi negocio de [NICHO] podría enfrentar y crea un plan de contingencia.",
+                en: "Act as a risk manager. List 5 possible crises my [NICHE] business could face and create a contingency plan.",
+                pt: "Atue como gerente de riscos. Liste 5 possíveis crises que meu negócio de [NICHO] poderia enfrentar e crie um plano de contingência.",
+                de: "Handeln Sie als Risikomanager. Listen Sie 5 mögliche Krisen auf, mit denen mein [NISCHE]-Geschäft konfrontiert werden könnte, und erstellen Sie einen Notfallplan.",
+                fr: "Agissez en tant que gestionnaire de risques. Listez 5 crises possibles auxquelles mon entreprise de [NICHE] pourrait être confrontée et créez un plan d'urgence.",
+                it: "Agisci come gestore del rischio. Elenca 5 possibili crisi che la mia attività di [NICCHIA] potrebbe affrontare e crea un piano di emergenza."
+            }},
+            { mod: 0, id: 28, name: {es: "28. Lead Magnets", en: "28. Lead Magnets", pt: "28. Lead Magnets", de: "28. Lead Magnets", fr: "28. Lead Magnets", it: "28. Lead Magnets"}, 
+              text: {
+                es: "Dame 10 ideas de regalos gratuitos (Ebooks, plantillas, webinars) que mi audiencia de [NICHO] moriría por descargar.",
+                en: "Give me 10 ideas for free gifts (Ebooks, templates, webinars) that my [NICHE] audience would die to download.",
+                pt: "Dê-me 10 ideias de presentes gratuitos (Ebooks, modelos, webinars) que meu público de [NICHO] morreria para baixar.",
+                de: "Geben Sie mir 10 Ideen für kostenlose Geschenke (E-Books, Vorlagen, Webinare), die mein [NISCHE]-Publikum unbedingt herunterladen möchte.",
+                fr: "Donnez-moi 10 idées de cadeaux gratuits (Ebooks, modèles, webinaires) que mon audience de [NICHE] mourrait d'envie de télécharger.",
+                it: "Dammi 10 idee per regali gratuiti (Ebook, modelli, webinar) che il mio pubblico di [NICCHIA] morirebbe dalla voglia di scaricare."
+            }},
+            { mod: 0, id: 29, name: {es: "29. Upsell", en: "29. Upsell", pt: "29. Upsell", de: "29. Upsell", fr: "29. Upsell", it: "29. Upsell"}, 
+              text: {
+                es: "Tengo un producto base de [PRODUCTO]. Diseña 3 opciones de Upsell (venta adicional) que aumenten el ticket promedio inmediatamente.",
+                en: "I have a base product of [PRODUCT]. Design 3 Upsell options (additional sale) that increase the average ticket immediately.",
+                pt: "Tenho um produto base de [PRODUTO]. Projete 3 opções de Upsell (venda adicional) que aumentem o ticket médio imediatamente.",
+                de: "Ich habe ein Basisprodukt von [PRODUKT]. Entwerfen Sie 3 Upsell-Optionen (Zusatzverkauf), die den Durchschnittsbon sofort erhöhen.",
+                fr: "J'ai un produit de base de [PRODUIT]. Concevez 3 options d'Upsell (vente additionnelle) qui augmentent le panier moyen immédiatement.",
+                it: "Ho un prodotto base di [PRODOTTO]. Progetta 3 opzioni di Upsell (vendita aggiuntiva) che aumentino immediatamente lo scontrino medio."
+            }},
+            { mod: 0, id: 30, name: {es: "30. Resumen Ejecutivo", en: "30. Exec Summary", pt: "30. Resumo Executivo", de: "30. Zusammenfassung", fr: "30. Résumé Exécutif", it: "30. Riepilogo Esecutivo"}, 
+              text: {
+                es: "Resume toda mi estrategia de negocio para [NICHO] en un párrafo potente de 100 palabras para inversores o socios.",
+                en: "Summarize my entire business strategy for [NICHE] in a powerful 100-word paragraph for investors or partners.",
+                pt: "Resuma toda a minha estratégia de negócios para [NICHO] em um parágrafo poderoso de 100 palavras para investidores ou parceiros.",
+                de: "Fassen Sie meine gesamte Geschäftsstrategie für [NISCHE] in einem kraftvollen 100-Wörter-Absatz für Investoren oder Partner zusammen.",
+                fr: "Résumez toute ma stratégie commerciale pour [NICHE] dans un paragraphe puissant de 100 mots pour les investisseurs ou partenaires.",
+                it: "Riassumi l'intera mia strategia aziendale per [NICCHIA] in un potente paragrafo di 100 parole per investitori o partner."
+            }},
+
+            // --- MÓDULO 2: CONTENIDOS (1-30) ---
+            { mod: 1, id: 1, name: {es: "1. Calendario Mensual", en: "1. Monthly Calendar", pt: "1. Calendário Mensal", de: "1. Monatskalender", fr: "1. Calendrier Mensuel", it: "1. Calendario Mensile"},
+              text: {
+                es: "Crea un calendario de contenidos de 4 semanas para [RED_SOCIAL] enfocado en [OBJETIVO: VENTAS O SEGUIDORES]. Incluye tema, formato y gancho para cada día.",
+                en: "Create a 4-week content calendar for [SOCIAL_MEDIA] focused on [GOAL: SALES OR FOLLOWERS]. Include topic, format, and hook for each day.",
+                pt: "Crie um calendário de conteúdo de 4 semanas para [REDE_SOCIAL] focado em [OBJETIVO: VENDAS OU SEGUIDORES]. Inclua tema, formato e gancho para cada dia.",
+                de: "Erstellen Sie einen 4-wöchigen Inhaltskalender für [SOZIALES_NETZWERK], der auf [ZIEL: VERKÄUFE ODER FOLLOWER] ausgerichtet ist. Enthalten Sie Thema, Format und Hook für jeden Tag.",
+                fr: "Créez un calendrier de contenu de 4 semaines pour [RESEAU_SOCIAL] axé sur [OBJECTIF : VENTES OU ABONNÉS]. Incluez le sujet, le format et l'accroche pour chaque jour.",
+                it: "Crea un calendario editoriale di 4 settimane per [SOCIAL_MEDIA] focalizzato su [OBIETTIVO: VENDITE O FOLLOWER]. Includi argomento, formato e gancio per ogni giorno."
+            }},
+            { mod: 1, id: 2, name: {es: "2. Guionista TikToks", en: "2. TikTok Scriptwriter", pt: "2. Roteirista TikToks", de: "2. TikTok-Drehbuchautor", fr: "2. Scénariste TikTok", it: "2. Sceneggiatore TikTok"},
+              text: {
+                es: "Escribe un guion de 30 segundos sobre [TEMA]. Usa una estructura de: Gancho visual disruptivo -> Historia rápida -> Consejo accionable -> Llamado a la acción.",
+                en: "Write a 30-second script about [TOPIC]. Use a structure of: Disruptive visual hook -> Quick story -> Actionable tip -> Call to action.",
+                pt: "Escreva um roteiro de 30 segundos sobre [TEMA]. Use uma estrutura de: Gancho visual disruptivo -> História rápida -> Dica acionável -> Chamada para ação.",
+                de: "Schreiben Sie ein 30-sekündiges Skript über [THEMA]. Verwenden Sie eine Struktur von: Disruptiver visueller Hook -> Schnelle Geschichte -> Umsetzbarer Tipp -> Aufruf zum Handeln.",
+                fr: "Écrivez un script de 30 secondes sur [SUJET]. Utilisez une structure de : Accroche visuelle disruptive -> Histoire rapide -> Conseil actionnable -> Appel à l'action.",
+                it: "Scrivi una sceneggiatura di 30 secondi su [ARGOMENTO]. Usa una struttura di: Gancio visivo dirompente -> Storia veloce -> Consiglio pratico -> Invito all'azione."
+            }},
+            { mod: 1, id: 3, name: {es: "3. Carrusel Educativo", en: "3. Edu Carousel", pt: "3. Carrossel Educativo", de: "3. Bildungskarussell", fr: "3. Carrousel Éducatif", it: "3. Carosello Educativo"},
+              text: {
+                es: "Crea la estructura para un carrusel de Instagram de 7 diapositivas sobre [TEMA]. Diapositiva 1: Título. 2-6: Contenido valor. 7: Pregunta para comentarios.",
+                en: "Create the structure for an Instagram carousel of 7 slides about [TOPIC]. Slide 1: Title. 2-6: Valuable content. 7: Question for comments.",
+                pt: "Crie a estrutura para um carrossel do Instagram de 7 slides sobre [TEMA]. Slide 1: Título. 2-6: Conteúdo de valor. 7: Pergunta para comentários.",
+                de: "Erstellen Sie die Struktur für ein Instagram-Karussell mit 7 Folien über [THEMA]. Folie 1: Titel. 2-6: Wertvoller Inhalt. 7: Frage für Kommentare.",
+                fr: "Créez la structure pour un carrousel Instagram de 7 diapositives sur [SUJET]. Diapositive 1 : Titre. 2-6 : Contenu de valeur. 7 : Question pour les commentaires.",
+                it: "Crea la struttura per un carosello Instagram di 7 slide su [ARGOMENTO]. Slide 1: Titolo. 2-6: Contenuto di valore. 7: Domanda per i commenti."
+            }},
+            { mod: 1, id: 4, name: {es: "4. Hilo de Twitter", en: "4. Twitter Thread", pt: "4. Fio do Twitter", de: "4. Twitter-Thread", fr: "4. Fil Twitter", it: "4. Thread Twitter"},
+              text: {
+                es: "Convierte este tema [TEMA] en un hilo de Twitter viral. La primera frase debe ser polémica. Usa frases cortas y espacios.",
+                en: "Turn this topic [TOPIC] into a viral Twitter thread. The first sentence should be controversial. Use short sentences and spaces.",
+                pt: "Converta este tema [TEMA] em um fio viral do Twitter. A primeira frase deve ser polêmica. Use frases curtas e espaços.",
+                de: "Verwandeln Sie dieses Thema [THEMA] in einen viralen Twitter-Thread. Der erste Satz sollte kontrovers sein. Verwenden Sie kurze Sätze und Leerzeichen.",
+                fr: "Transformez ce sujet [SUJET] en un fil Twitter viral. La première phrase doit être controversée. Utilisez des phrases courtes et des espaces.",
+                it: "Trasforma questo argomento [ARGOMENTO] in un thread virale di Twitter. La prima frase deve essere controversa. Usa frasi brevi e spazi."
+            }},
+            { mod: 1, id: 5, name: {es: "5. Títulos YouTube", en: "5. YouTube Titles", pt: "5. Títulos YouTube", de: "5. YouTube-Titel", fr: "5. Titres YouTube", it: "5. Titoli YouTube"},
+              text: {
+                es: "Dame 10 títulos para videos de YouTube sobre [NICHO] que tengan un alto CTR. Usa formatos de 'Lista', 'Cómo hacer' y 'Advertencia'.",
+                en: "Give me 10 YouTube video titles about [NICHE] that have a high CTR. Use 'List', 'How-to', and 'Warning' formats.",
+                pt: "Dê-me 10 títulos para vídeos do YouTube sobre [NICHO] que tenham um alto CTR. Use formatos de 'Lista', 'Como fazer' e 'Aviso'.",
+                de: "Geben Sie mir 10 YouTube-Videotitel über [NISCHE], die eine hohe CTR haben. Verwenden Sie die Formate 'Liste', 'Anleitung' und 'Warnung'.",
+                fr: "Donnez-moi 10 titres de vidéos YouTube sur [NICHE] qui ont un CTR élevé. Utilisez les formats 'Liste', 'Comment faire' et 'Avertissement'.",
+                it: "Dammi 10 titoli per video YouTube su [NICCHIA] che abbiano un alto CTR. Usa formati 'Lista', 'Come fare' e 'Avvertimento'."
+            }},
+            { mod: 1, id: 6, name: {es: "6. Reciclaje", en: "6. Recycling", pt: "6. Reciclagem", de: "6. Recycling", fr: "6. Recyclage", it: "6. Riciclo"},
+              text: {
+                es: "Tengo este texto largo: [PEGAR_TEXTO]. Extrae de él: 1 Tweet, 1 idea para Reel, 1 frase para una Historia y 1 asunto para email.",
+                en: "I have this long text: [PASTE_TEXT]. Extract from it: 1 Tweet, 1 Reel idea, 1 sentence for a Story, and 1 email subject line.",
+                pt: "Tenho este texto longo: [COLAR_TEXTO]. Extraia dele: 1 Tweet, 1 ideia para Reel, 1 frase para um Story e 1 assunto para e-mail.",
+                de: "Ich habe diesen langen Text: [TEXT_EINFÜGEN]. Extrahieren Sie daraus: 1 Tweet, 1 Reel-Idee, 1 Satz für eine Story und 1 E-Mail-Betreffzeile.",
+                fr: "J'ai ce long texte : [COLLER_TEXTE]. Extrayez-en : 1 Tweet, 1 idée de Reel, 1 phrase pour une Story et 1 objet d'e-mail.",
+                it: "Ho questo testo lungo: [INCOLLA_TESTO]. Estrai da esso: 1 Tweet, 1 idea per Reel, 1 frase per una Storia e 1 oggetto per email."
+            }},
+            { mod: 1, id: 7, name: {es: "7. Stories Venta", en: "7. Sales Stories", pt: "7. Stories Venda", de: "7. Verkaufs-Stories", fr: "7. Stories Vente", it: "7. Stories Vendita"},
+              text: {
+                es: "Escribe una secuencia de 5 historias de Instagram para vender [PRODUCTO] sin ser agresivo. Historia 1: Problema cotidiano. Historia 2: Encuesta. Historia 3: Resultado. Historia 4: Testimonio. Historia 5: Link.",
+                en: "Write a sequence of 5 Instagram stories to sell [PRODUCT] without being aggressive. Story 1: Daily problem. Story 2: Poll. Story 3: Result. Story 4: Testimonial. Story 5: Link.",
+                pt: "Escreva uma sequência de 5 stories do Instagram para vender [PRODUTO] sem ser agressivo. Story 1: Problema cotidiano. Story 2: Enquete. Story 3: Resultado. Story 4: Depoimento. Story 5: Link.",
+                de: "Schreiben Sie eine Sequenz von 5 Instagram-Stories, um [PRODUKT] zu verkaufen, ohne aggressiv zu sein. Story 1: Alltagsproblem. Story 2: Umfrage. Story 3: Ergebnis. Story 4: Testimonial. Story 5: Link.",
+                fr: "Écrivez une séquence de 5 stories Instagram pour vendre [PRODUIT] sans être agressif. Story 1 : Problème quotidien. Story 2 : Sondage. Story 3 : Résultat. Story 4 : Témoignage. Story 5 : Lien.",
+                it: "Scrivi una sequenza di 5 storie Instagram per vendere [PRODOTTO] senza essere aggressivo. Storia 1: Problema quotidiano. Storia 2: Sondaggio. Storia 3: Risultato. Storia 4: Testimonianza. Storia 5: Link."
+            }},
+            { mod: 1, id: 8, name: {es: "8. Biografía", en: "8. Bio", pt: "8. Biografia", de: "8. Bio", fr: "8. Bio", it: "8. Bio"},
+              text: {
+                es: "Escribe 5 opciones de biografía para [PERFIL]. Debe incluir: Quién soy, qué logro para el cliente y una flecha hacia el enlace.",
+                en: "Write 5 bio options for [PROFILE]. It must include: Who I am, what I achieve for the customer, and an arrow to the link.",
+                pt: "Escreva 5 opções de biografia para [PERFIL]. Deve incluir: Quem sou eu, o que conquisto para o cliente e uma seta para o link.",
+                de: "Schreiben Sie 5 Bio-Optionen für [PROFIL]. Muss enthalten: Wer ich bin, was ich für den Kunden erreiche, und einen Pfeil zum Link.",
+                fr: "Écrivez 5 options de biographie pour [PROFIL]. Doit inclure : Qui je suis, ce que j'accomplis pour le client et une flèche vers le lien.",
+                it: "Scrivi 5 opzioni di biografia per [PROFILO]. Deve includere: Chi sono, cosa ottengo per il cliente e una freccia verso il link."
+            }},
+            { mod: 1, id: 9, name: {es: "9. Hashtags", en: "9. Hashtags", pt: "9. Hashtags", de: "9. Hashtags", fr: "9. Hashtags", it: "9. Hashtag"},
+              text: {
+                es: "Dame 3 grupos de 15 hashtags para [NICHO]. Grupo 1: Alta competencia. Grupo 2: Nicho específico. Grupo 3: Ubicación.",
+                en: "Give me 3 groups of 15 hashtags for [NICHE]. Group 1: High competition. Group 2: Specific niche. Group 3: Location.",
+                pt: "Dê-me 3 grupos de 15 hashtags para [NICHO]. Grupo 1: Alta concorrência. Grupo 2: Nicho específico. Grupo 3: Localização.",
+                de: "Geben Sie mir 3 Gruppen von 15 Hashtags für [NISCHE]. Gruppe 1: Hoher Wettbewerb. Gruppe 2: Spezifische Nische. Gruppe 3: Standort.",
+                fr: "Donnez-moi 3 groupes de 15 hashtags pour [NICHE]. Groupe 1 : Forte concurrence. Groupe 2 : Niche spécifique. Groupe 3 : Localisation.",
+                it: "Dammi 3 gruppi di 15 hashtag per [NICCHIA]. Gruppo 1: Alta concorrenza. Gruppo 2: Nicchia specifica. Gruppo 3: Posizione."
+            }},
+            { mod: 1, id: 10, name: {es: "10. Lives", en: "10. Lives", pt: "10. Lives", de: "10. Lives", fr: "10. Lives", it: "10. Live"},
+              text: {
+                es: "Dame 5 temas para hacer transmisiones en vivo que generen interacción y permitan vender mi producto [NOMBRE] al final.",
+                en: "Give me 5 topics for live streams that generate interaction and allow me to sell my product [NAME] at the end.",
+                pt: "Dê-me 5 temas para fazer transmissões ao vivo que gerem interação e permitam vender meu produto [NOME] no final.",
+                de: "Geben Sie mir 5 Themen für Live-Streams, die Interaktion erzeugen und es mir ermöglichen, mein Produkt [NAME] am Ende zu verkaufen.",
+                fr: "Donnez-moi 5 sujets pour des diffusions en direct qui génèrent de l'interaction et me permettent de vendre mon produit [NOM] à la fin.",
+                it: "Dammi 5 argomenti per trasmissioni in diretta che generino interazione e mi permettano di vendere il mio prodotto [NOME] alla fine."
+            }},
+            { mod: 1, id: 11, name: {es: "11. Reels 15s", en: "11. 15s Reels", pt: "11. Reels 15s", de: "11. 15s Reels", fr: "11. Reels 15s", it: "11. Reels 15s"},
+              text: {
+                es: "Crea 3 guiones rápidos de 15 segundos para Instagram Reels sobre [TEMA] que usen audios de tendencia.",
+                en: "Create 3 quick 15-second scripts for Instagram Reels about [TOPIC] that use trending audios.",
+                pt: "Crie 3 roteiros rápidos de 15 segundos para Instagram Reels sobre [TEMA] que usem áudios em alta.",
+                de: "Erstellen Sie 3 schnelle 15-Sekunden-Skripte für Instagram Reels über [THEMA], die Trend-Audios verwenden.",
+                fr: "Créez 3 scripts rapides de 15 secondes pour Instagram Reels sur [SUJET] qui utilisent des audios tendance.",
+                it: "Crea 3 script veloci di 15 secondi per Instagram Reels su [ARGOMENTO] che utilizzano audio di tendenza."
+            }},
+            { mod: 1, id: 12, name: {es: "12. LinkedIn", en: "12. LinkedIn", pt: "12. LinkedIn", de: "12. LinkedIn", fr: "12. LinkedIn", it: "12. LinkedIn"},
+              text: {
+                es: "Escribe un post para LinkedIn que me posicione como autoridad en [INDUSTRIA], compartiendo una lección aprendida de un error.",
+                en: "Write a LinkedIn post that positions me as an authority in [INDUSTRY], sharing a lesson learned from a mistake.",
+                pt: "Escreva um post para o LinkedIn que me posicione como autoridade em [INDUSTRIA], compartilhando uma lição aprendida com um erro.",
+                de: "Schreiben Sie einen LinkedIn-Beitrag, der mich als Autorität in [BRANCHE] positioniert und eine Lektion teilt, die ich aus einem Fehler gelernt habe.",
+                fr: "Écrivez un post LinkedIn qui me positionne comme une autorité dans [INDUSTRIE], partageant une leçon apprise d'une erreur.",
+                it: "Scrivi un post su LinkedIn che mi posizioni come autorità in [INDUSTRIA], condividendo una lezione appresa da un errore."
+            }},
+            { mod: 1, id: 13, name: {es: "13. Pinterest SEO", en: "13. Pinterest SEO", pt: "13. Pinterest SEO", de: "13. Pinterest SEO", fr: "13. Pinterest SEO", it: "13. Pinterest SEO"},
+              text: {
+                es: "Dame 15 títulos y descripciones optimizadas para Pinterest enfocadas en [NICHO] para atraer tráfico orgánico.",
+                en: "Give me 15 Pinterest-optimized titles and descriptions focused on [NICHE] to attract organic traffic.",
+                pt: "Dê-me 15 títulos e descrições otimizadas para Pinterest focadas em [NICHO] para atrair tráfego orgânico.",
+                de: "Geben Sie mir 15 Pinterest-optimierte Titel und Beschreibungen, die auf [NISCHE] fokussiert sind, um organischen Traffic anzuziehen.",
+                fr: "Donnez-moi 15 titres et descriptions optimisés pour Pinterest axés sur [NICHE] pour attirer du trafic organique.",
+                it: "Dammi 15 titoli e descrizioni ottimizzati per Pinterest focalizzati su [NICCHIA] per attirare traffico organico."
+            }},
+            { mod: 1, id: 14, name: {es: "14. Memes", en: "14. Memes", pt: "14. Memes", de: "14. Memes", fr: "14. Mèmes", it: "14. Meme"},
+              text: {
+                es: "Dame 5 ideas de memes relacionados con [NICHO] que mi audiencia comparta porque se sienten identificados.",
+                en: "Give me 5 meme ideas related to [NICHE] that my audience will share because they relate to them.",
+                pt: "Dê-me 5 ideias de memes relacionados a [NICHO] que meu público compartilhe porque se identifica.",
+                de: "Geben Sie mir 5 Meme-Ideen zu [NISCHE], die mein Publikum teilen wird, weil es sich damit identifiziert.",
+                fr: "Donnez-moi 5 idées de mèmes liés à [NICHE] que mon public partagera parce qu'il s'y identifie.",
+                it: "Dammi 5 idee di meme relative a [NICCHIA] che il mio pubblico condividerà perché si immedesima."
+            }},
+            { mod: 1, id: 15, name: {es: "15. Podcast Intro", en: "15. Podcast Intro", pt: "15. Intro Podcast", de: "15. Podcast-Intro", fr: "15. Intro Podcast", it: "15. Intro Podcast"},
+              text: {
+                es: "Escribe la introducción para un podcast sobre [TEMA]. Debe ser intrigante y prometer un beneficio claro en los primeros 60 segundos.",
+                en: "Write the introduction for a podcast about [TOPIC]. It must be intriguing and promise a clear benefit in the first 60 seconds.",
+                pt: "Escreva a introdução para um podcast sobre [TEMA]. Deve ser intrigante e prometer um benefício claro nos primeiros 60 segundos.",
+                de: "Schreiben Sie die Einleitung für einen Podcast über [THEMA]. Sie muss fesselnd sein und in den ersten 60 Sekunden einen klaren Nutzen versprechen.",
+                fr: "Écrivez l'introduction d'un podcast sur [SUJET]. Elle doit être intrigante et promettre un avantage clair dans les 60 premières secondes.",
+                it: "Scrivi l'introduzione per un podcast su [ARGOMENTO]. Deve essere intrigante e promettere un chiaro beneficio nei primi 60 secondi."
+            }},
+            { mod: 1, id: 16, name: {es: "16. Caza Mitos", en: "16. Myth Buster", pt: "16. Caça Mitos", de: "16. Mythenjäger", fr: "16. Chasseur Mythes", it: "16. Caccia Miti"},
+              text: {
+                es: "Escribe un post de Instagram que desmienta 3 mitos comunes sobre [NICHO]. Usa un tono directo y educativo.",
+                en: "Write an Instagram post debunking 3 common myths about [NICHE]. Use a direct and educational tone.",
+                pt: "Escreva um post no Instagram desmascarando 3 mitos comuns sobre [NICHO]. Use um tom direto e educativo.",
+                de: "Schreiben Sie einen Instagram-Beitrag, der 3 gängige Mythen über [NISCHE] entlarvt. Verwenden Sie einen direkten und lehrreichen Ton.",
+                fr: "Écrivez un post Instagram démystifiant 3 mythes courants sur [NICHE]. Utilisez un ton direct et éducatif.",
+                it: "Scrivi un post su Instagram che sfata 3 miti comuni su [NICCHIA]. Usa un tono diretto ed educativo."
+            }},
+            { mod: 1, id: 17, name: {es: "17. Encuestas", en: "17. Polls", pt: "17. Enquetes", de: "17. Umfragen", fr: "17. Sondages", it: "17. Sondaggi"},
+              text: {
+                es: "Crea 5 encuestas para mi canal de Telegram de [NICHO] que me ayuden a conocer qué producto quieren comprar mis seguidores.",
+                en: "Create 5 polls for my [NICHE] Telegram channel to help me know what product my followers want to buy.",
+                pt: "Crie 5 enquetes para meu canal do Telegram de [NICHO] para me ajudar a saber qual produto meus seguidores querem comprar.",
+                de: "Erstellen Sie 5 Umfragen für meinen [NISCHE]-Telegram-Kanal, um herauszufinden, welches Produkt meine Follower kaufen möchten.",
+                fr: "Créez 5 sondages pour mon canal Telegram [NICHE] pour m'aider à savoir quel produit mes abonnés veulent acheter.",
+                it: "Crea 5 sondaggi per il mio canale Telegram di [NICCHIA] per aiutarmi a sapere quale prodotto vogliono acquistare i miei follower."
+            }},
+            { mod: 1, id: 18, name: {es: "18. Un Día Conmigo", en: "18. Day in the Life", pt: "18. Um Dia Comigo", de: "18. Tag im Leben", fr: "18. Journée avec moi", it: "18. Un Giorno con Me"},
+              text: {
+                es: "Diseña la estructura de un video corto mostrando mi rutina como experto en [NICHO] para generar conexión humana.",
+                en: "Design the structure of a short video showing my routine as an expert in [NICHE] to generate human connection.",
+                pt: "Projete a estrutura de um vídeo curto mostrando minha rotina como especialista em [NICHO] para gerar conexão humana.",
+                de: "Entwerfen Sie die Struktur eines kurzen Videos, das meine Routine als Experte in [NISCHE] zeigt, um menschliche Verbindung herzustellen.",
+                fr: "Concevez la structure d'une courte vidéo montrant ma routine en tant qu'expert en [NICHE] pour créer une connexion humaine.",
+                it: "Progetta la struttura di un breve video che mostri la mia routine come esperto in [NICCHIA] per generare connessione umana."
+            }},
+            { mod: 1, id: 19, name: {es: "19. Respuestas CM", en: "19. CM Replies", pt: "19. Respostas CM", de: "19. CM-Antworten", fr: "19. Réponses CM", it: "19. Risposte CM"},
+              text: {
+                es: "Actúa como mi Community Manager. Escribe respuestas amables, profesionales y que generen más conversación para estos comentarios: [PEGAR_COMENTARIOS].",
+                en: "Act as my Community Manager. Write kind, professional replies that generate more conversation for these comments: [PASTE_COMMENTS].",
+                pt: "Atue como meu Community Manager. Escreva respostas gentis, profissionais e que gerem mais conversa para estes comentários: [COLAR_COMENTARIOS].",
+                de: "Handeln Sie als mein Community Manager. Schreiben Sie freundliche, professionelle Antworten, die mehr Konversation für diese Kommentare erzeugen: [KOMMENTARE_EINFÜGEN].",
+                fr: "Agissez en tant que mon Community Manager. Écrivez des réponses aimables, professionnelles et qui génèrent plus de conversation pour ces commentaires : [COLLER_COMMENTAIRES].",
+                it: "Agisci come il mio Community Manager. Scrivi risposte gentili, professionali e che generino più conversazione per questi commenti: [INCOLLA_COMMENTI]."
+            }},
+            { mod: 1, id: 20, name: {es: "20. UGC", en: "20. UGC", pt: "20. UGC", de: "20. UGC", fr: "20. UGC", it: "20. UGC"},
+              text: {
+                es: "Dame 5 ideas de retos o dinámicas para que mis alumnos de [CURSO] suban historias etiquetándome.",
+                en: "Give me 5 ideas for challenges or dynamics so my [COURSE] students upload stories tagging me.",
+                pt: "Dê-me 5 ideias de desafios ou dinâmicas para que meus alunos do [CURSO] postem stories me marcando.",
+                de: "Geben Sie mir 5 Ideen für Herausforderungen oder Dynamiken, damit meine [KURS]-Schüler Stories hochladen und mich markieren.",
+                fr: "Donnez-moi 5 idées de défis ou de dynamiques pour que mes élèves du [COURS] publient des stories en me taguant.",
+                it: "Dammi 5 idee per sfide o dinamiche affinché i miei studenti del [CORSO] carichino storie taggandomi."
+            }},
+            { mod: 1, id: 21, name: {es: "21. Reddit/Quora", en: "21. Reddit/Quora", pt: "21. Reddit/Quora", de: "21. Reddit/Quora", fr: "21. Reddit/Quora", it: "21. Reddit/Quora"},
+              text: {
+                es: "Escribe una respuesta experta para un hilo de Reddit sobre [PROBLEMA_NICHO] que sutilmente mencione mi solución.",
+                en: "Write an expert reply for a Reddit thread about [NICHE_PROBLEM] that subtly mentions my solution.",
+                pt: "Escreva uma resposta de especialista para um tópico do Reddit sobre [PROBLEMA_NICHO] que mencione sutilmente minha solução.",
+                de: "Schreiben Sie eine Expertenantwort für einen Reddit-Thread über [NISCHENPROBLEM], die meine Lösung subtil erwähnt.",
+                fr: "Écrivez une réponse d'expert pour un fil Reddit sur [PROBLEME_NICHE] qui mentionne subtilement ma solution.",
+                it: "Scrivi una risposta esperta per un thread di Reddit su [PROBLEMA_NICCHIA] che menzioni sottilmente la mia soluzione."
+            }},
+            { mod: 1, id: 22, name: {es: "22. Webinar Mini", en: "22. Mini Webinar", pt: "22. Mini Webinar", de: "22. Mini-Webinar", fr: "22. Mini Webinaire", it: "22. Mini Webinar"},
+              text: {
+                es: "Escribe el esquema de un webinar de 15 minutos que aporte mucho valor y termine con un 'Pitch' de venta para [PRODUCTO].",
+                en: "Write the outline for a 15-minute webinar that provides a lot of value and ends with a sales 'Pitch' for [PRODUCT].",
+                pt: "Escreva o esquema de um webinar de 15 minutos que agregue muito valor e termine com um 'Pitch' de venda para [PRODUTO].",
+                de: "Schreiben Sie die Gliederung für ein 15-minütiges Webinar, das viel Wert bietet und mit einem Verkaufs-'Pitch' für [PRODUKT] endet.",
+                fr: "Écrivez le plan d'un webinaire de 15 minutes qui apporte beaucoup de valeur et se termine par un 'Pitch' de vente pour [PRODUIT].",
+                it: "Scrivi la scaletta di un webinar di 15 minuti che offra molto valore e termini con un 'Pitch' di vendita per [PRODOTTO]."
+            }},
+            { mod: 1, id: 23, name: {es: "23. Newsletter Curada", en: "23. Curated Newsletter", pt: "23. Newsletter Curada", de: "23. Kuratierter Newsletter", fr: "23. Newsletter Curatée", it: "23. Newsletter Curata"},
+              text: {
+                es: "Dame 5 temas de actualidad en la industria de [INDUSTRIA] para comentar en mi próximo boletín semanal.",
+                en: "Give me 5 current topics in the [INDUSTRY] industry to comment on in my next weekly newsletter.",
+                pt: "Dê-me 5 tópicos atuais na indústria de [INDUSTRIA] para comentar em meu próximo boletim semanal.",
+                de: "Geben Sie mir 5 aktuelle Themen in der [INDUSTRIE]-Branche, die ich in meinem nächsten wöchentlichen Newsletter kommentieren kann.",
+                fr: "Donnez-moi 5 sujets d'actualité dans l'industrie de [INDUSTRIE] à commenter dans ma prochaine newsletter hebdomadaire.",
+                it: "Dammi 5 argomenti attuali nell'industria di [INDUSTRIA] da commentare nella mia prossima newsletter settimanale."
+            }},
+            { mod: 1, id: 24, name: {es: "24. Miniaturas", en: "24. Thumbnails", pt: "24. Miniaturas", de: "24. Thumbnails", fr: "24. Miniatures", it: "24. Miniature"},
+              text: {
+                es: "Describe visualmente cómo debería ser la miniatura (thumbnail) de mi video sobre [TEMA] para que la gente no pueda evitar hacer clic.",
+                en: "Visually describe what the thumbnail for my video about [TOPIC] should look like so people can't help but click.",
+                pt: "Descreva visualmente como deve ser a miniatura (thumbnail) do meu vídeo sobre [TEMA] para que as pessoas não consigam evitar clicar.",
+                de: "Beschreiben Sie visuell, wie das Thumbnail meines Videos über [THEMA] aussehen sollte, damit die Leute nicht anders können, als darauf zu klicken.",
+                fr: "Décrivez visuellement à quoi devrait ressembler la miniature de ma vidéo sur [SUJET] pour que les gens ne puissent s'empêcher de cliquer.",
+                it: "Descrivi visivamente come dovrebbe essere la miniatura del mio video su [ARGOMENTO] in modo che le persone non possano fare a meno di cliccare."
+            }},
+            { mod: 1, id: 25, name: {es: "25. Bastidores", en: "25. Behind Scenes", pt: "25. Bastidores", de: "25. Hinter Kulissen", fr: "25. Coulisses", it: "25. Dietro le Quinte"},
+              text: {
+                es: "Escribe un pie de foto para una imagen mostrando cómo grabo mis cursos de [PRODUCTO] para generar autoridad.",
+                en: "Write a caption for an image showing how I record my [PRODUCT] courses to generate authority.",
+                pt: "Escreva uma legenda para uma imagem mostrando como gravo meus cursos de [PRODUTO] para gerar autoridade.",
+                de: "Schreiben Sie eine Bildunterschrift für ein Bild, das zeigt, wie ich meine [PRODUKT]-Kurse aufnehme, um Autorität zu generieren.",
+                fr: "Écrivez une légende pour une image montrant comment j'enregistre mes cours de [PRODUIT] pour générer de l'autorité.",
+                it: "Scrivi una didascalia per un'immagine che mostri come registro i miei corsi di [PRODOTTO] per generare autorità."
+            }},
+            { mod: 1, id: 26, name: {es: "26. Entrevista", en: "26. Interview", pt: "26. Entrevista", de: "26. Interview", fr: "26. Interview", it: "26. Intervista"},
+              text: {
+                es: "Voy a entrevistar a un experto en [TEMA]. Dame las 7 preguntas más picantes y útiles que le puedo hacer.",
+                en: "I'm going to interview an expert on [TOPIC]. Give me the 7 most spicy and useful questions I can ask them.",
+                pt: "Vou entrevistar um especialista em [TEMA]. Dê-me as 7 perguntas mais picantes e úteis que posso fazer.",
+                de: "Ich werde einen Experten zu [THEMA] interviewen. Geben Sie mir die 7 schärfsten und nützlichsten Fragen, die ich stellen kann.",
+                fr: "Je vais interviewer un expert sur [SUJET]. Donnez-moi les 7 questions les plus piquantes et utiles que je peux lui poser.",
+                it: "Intervisterò un esperto su [ARGOMENTO]. Dammi le 7 domande più piccanti e utili che posso fargli."
+            }},
+            { mod: 1, id: 27, name: {es: "27. SEO Blog", en: "27. SEO Blog", pt: "27. SEO Blog", de: "27. SEO Blog", fr: "27. SEO Blog", it: "27. SEO Blog"},
+              text: {
+                es: "Dame una lista de 10 palabras clave 'Long Tail' para artículos de blog sobre [NICHO] con baja competencia.",
+                en: "Give me a list of 10 'Long Tail' keywords for blog articles about [NICHE] with low competition.",
+                pt: "Dê-me uma lista de 10 palavras-chave 'Long Tail' para artigos de blog sobre [NICHO] com baixa concorrência.",
+                de: "Geben Sie mir eine Liste von 10 'Long Tail'-Keywords für Blogartikel über [NISCHE] mit geringem Wettbewerb.",
+                fr: "Donnez-moi une liste de 10 mots-clés 'Longue Traîne' pour des articles de blog sur [NICHE] avec une faible concurrence.",
+                it: "Dammi un elenco di 10 parole chiave 'Long Tail' per articoli di blog su [NICCHIA] con bassa concorrenza."
+            }},
+            { mod: 1, id: 28, name: {es: "28. Celebra Logro", en: "28. Celebrate Win", pt: "28. Celebrar Conquista", de: "28. Erfolg feiern", fr: "28. Célébrer Victoire", it: "28. Celebrare Vittoria"},
+              text: {
+                es: "Escribe un post emotivo celebrando que mi comunidad llegó a [X_CANTIDAD] de seguidores o alumnos, enfocado en el éxito de ellos.",
+                en: "Write an emotional post celebrating that my community reached [X_AMOUNT] followers or students, focused on their success.",
+                pt: "Escreva um post emotivo celebrando que minha comunidade chegou a [X_QUANTIDADE] de seguidores ou alunos, focado no sucesso deles.",
+                de: "Schreiben Sie einen emotionalen Beitrag, um zu feiern, dass meine Community [X_MENGE] Follower oder Schüler erreicht hat, fokussiert auf deren Erfolg.",
+                fr: "Écrivez un post émouvant célébrant que ma communauté a atteint [X_MONTANT] d'abonnés ou d'élèves, axé sur leur succès.",
+                it: "Scrivi un post emotivo celebrando che la mia comunità ha raggiunto [X_QUANTITA] follower o studenti, focalizzato sul loro successo."
+            }},
+            { mod: 1, id: 29, name: {es: "29. Anuncios Orgánicos", en: "29. Organic Ads", pt: "29. Anúncios Orgânicos", de: "29. Organische Anzeigen", fr: "29. Pubs Organiques", it: "29. Annunci Organici"},
+              text: {
+                es: "Escribe un guion para una historia de 15 segundos que no parezca un anuncio, invitando a la gente a un evento gratuito.",
+                en: "Write a script for a 15-second story that doesn't look like an ad, inviting people to a free event.",
+                pt: "Escreva um roteiro para um story de 15 segundos que não pareça um anúncio, convidando as pessoas para um evento gratuito.",
+                de: "Schreiben Sie ein Skript für eine 15-Sekunden-Story, die nicht wie eine Anzeige aussieht, und laden Sie Leute zu einem kostenlosen Event ein.",
+                fr: "Écrivez un script pour une story de 15 secondes qui ne ressemble pas à une publicité, invitant les gens à un événement gratuit.",
+                it: "Scrivi una sceneggiatura per una storia di 15 secondi che non sembri un annuncio, invitando le persone a un evento gratuito."
+            }},
+            { mod: 1, id: 30, name: {es: "30. Crisis Contenido", en: "30. Content Crisis", pt: "30. Crise Conteúdo", de: "30. Inhaltskrise", fr: "30. Crise Contenu", it: "30. Crisi Contenuti"},
+              text: {
+                es: "Me quedé sin ideas. Dame 10 formatos 'comodín' que siempre funcionan en [NICHO] para publicar hoy mismo.",
+                en: "I ran out of ideas. Give me 10 'wildcard' formats that always work in [NICHE] to post today.",
+                pt: "Fiquei sem ideias. Dê-me 10 formatos 'curinga' que sempre funcionam em [NICHO] para publicar hoje mesmo.",
+                de: "Mir sind die Ideen ausgegangen. Geben Sie mir 10 'Joker'-Formate, die in [NISCHE] immer funktionieren, um heute zu veröffentlichen.",
+                fr: "Je suis à court d'idées. Donnez-moi 10 formats 'joker' qui fonctionnent toujours dans [NICHE] à publier aujourd'hui.",
+                it: "Ho finito le idee. Dammi 10 formati 'jolly' che funzionano sempre in [NICCHIA] da pubblicare oggi stesso."
+            }},
+
+            // --- MÓDULO 3: COPYWRITING (1-30) ---
+            { mod: 2, id: 1, name: {es: "1. Fórmula AIDA", en: "1. AIDA Formula", pt: "1. Fórmula AIDA", de: "1. AIDA-Formel", fr: "1. Formule AIDA", it: "1. Formula AIDA"},
+              text: {
+                es: "Escribe el texto (copy) para un anuncio de Facebook Ads vendiendo [PRODUCTO]. Usa estrictamente la fórmula Atención, Interés, Deseo, Acción.",
+                en: "Write the copy for a Facebook Ad selling [PRODUCT]. Strictly use the Attention, Interest, Desire, Action formula.",
+                pt: "Escreva o texto (copy) para um anúncio do Facebook Ads vendendo [PRODUTO]. Use estritamente a fórmula Atenção, Interesse, Desejo, Ação.",
+                de: "Schreiben Sie den Text für eine Facebook-Anzeige, die [PRODUKT] verkauft. Verwenden Sie streng die Formel Aufmerksamkeit, Interesse, Verlangen, Aktion.",
+                fr: "Écrivez le texte (copy) pour une publicité Facebook vendant [PRODUIT]. Utilisez strictement la formule Attention, Intérêt, Désir, Action.",
+                it: "Scrivi il testo (copy) per un'inserzione Facebook che vende [PRODOTTO]. Usa rigorosamente la formula Attenzione, Interesse, Desiderio, Azione."
+            }},
+            { mod: 2, id: 2, name: {es: "2. Titulares H1", en: "2. H1 Headlines", pt: "2. Manchetes H1", de: "2. H1-Überschriften", fr: "2. Titres H1", it: "2. Titoli H1"},
+              text: {
+                es: "Escribe 10 titulares H1 para mi página de ventas. Deben prometer un resultado grande en poco tiempo y eliminar una objeción.",
+                en: "Write 10 H1 headlines for my sales page. They must promise a big result in a short time and eliminate an objection.",
+                pt: "Escreva 10 manchetes H1 para minha página de vendas. Devem prometer um grande resultado em pouco tempo e eliminar uma objeção.",
+                de: "Schreiben Sie 10 H1-Überschriften für meine Verkaufsseite. Sie müssen ein großes Ergebnis in kurzer Zeit versprechen und einen Einwand beseitigen.",
+                fr: "Écrivez 10 titres H1 pour ma page de vente. Ils doivent promettre un grand résultat en peu de temps et éliminer une objection.",
+                it: "Scrivi 10 titoli H1 per la mia pagina di vendita. Devono promettere un grande risultato in poco tempo ed eliminare un'obiezione."
+            }},
+            { mod: 2, id: 3, name: {es: "3. Balas Beneficios", en: "3. Benefit Bullets", pt: "3. Bullets Benefícios", de: "3. Nutzen-Bullets", fr: "3. Puces Bénéfices", it: "3. Elenco Benefici"},
+              text: {
+                es: "Convierte estas 5 características técnicas de mi producto [LISTA] en 5 beneficios emocionales irresistibles.",
+                en: "Convert these 5 technical features of my product [LIST] into 5 irresistible emotional benefits.",
+                pt: "Converta estas 5 características técnicas do meu produto [LISTA] em 5 benefícios emocionais irresistíveis.",
+                de: "Wandeln Sie diese 5 technischen Merkmale meines Produkts [LISTE] in 5 unwiderstehliche emotionale Vorteile um.",
+                fr: "Convertissez ces 5 caractéristiques techniques de mon produit [LISTE] en 5 avantages émotionnels irrésistibles.",
+                it: "Converti queste 5 caratteristiche tecniche del mio prodotto [LISTA] in 5 benefici emotivi irresistibili."
+            }},
+            { mod: 2, id: 4, name: {es: "4. Guion VSL", en: "4. VSL Script", pt: "4. Roteiro VSL", de: "4. VSL-Skript", fr: "4. Script VSL", it: "4. Script VSL"},
+              text: {
+                es: "Escribe el esquema de un video de ventas de 3 minutos. Estructura: Identificación del problema -> Agitación -> Presentación de la solución -> Prueba social -> Oferta -> Escasez -> Llamada a la acción.",
+                en: "Write the outline for a 3-minute sales video. Structure: Problem identification -> Agitation -> Solution presentation -> Social proof -> Offer -> Scarcity -> Call to action.",
+                pt: "Escreva o esquema de um vídeo de vendas de 3 minutos. Estrutura: Identificação do problema -> Agitação -> Apresentação da solução -> Prova social -> Oferta -> Escassez -> Chamada para ação.",
+                de: "Schreiben Sie die Gliederung für ein 3-minütiges Verkaufsvideo. Struktur: Problemidentifikation -> Agitation -> Lösungspräsentation -> Sozialer Beweis -> Angebot -> Knappheit -> Aufruf zum Handeln.",
+                fr: "Écrivez le plan d'une vidéo de vente de 3 minutes. Structure : Identification du problème -> Agitation -> Présentation de la solution -> Preuve sociale -> Offre -> Rareté -> Appel à l'action.",
+                it: "Scrivi la scaletta per un video di vendita di 3 minuti. Struttura: Identificazione del problema -> Agitazione -> Presentazione della soluzione -> Riprova sociale -> Offerta -> Scarsità -> Invito all'azione."
+            }},
+            { mod: 2, id: 5, name: {es: "5. Testimonios", en: "5. Testimonials", pt: "5. Depoimentos", de: "5. Testimonials", fr: "5. Témoignages", it: "5. Testimonianze"},
+              text: {
+                es: "Tengo este testimonio de un cliente que está mal redactado: [TESTIMONIO]. Reescríbelo para que sea más claro y persuasivo, sin perder la esencia real.",
+                en: "I have this customer testimonial that is poorly written: [TESTIMONIAL]. Rewrite it to be clearer and more persuasive, without losing the real essence.",
+                pt: "Tenho este depoimento de um cliente que está mal escrito: [DEPOIMENTO]. Reescreva-o para que seja mais claro e persuasivo, sem perder a essência real.",
+                de: "Ich habe dieses Kunden-Testimonial, das schlecht geschrieben ist: [TESTIMONIAL]. Schreiben Sie es um, damit es klarer und überzeugender ist, ohne die eigentliche Essenz zu verlieren.",
+                fr: "J'ai ce témoignage client mal écrit : [TEMOIGNAGE]. Réécrivez-le pour qu'il soit plus clair et persuasif, sans perdre l'essence réelle.",
+                it: "Ho questa testimonianza di un cliente scritta male: [TESTIMONIANZA]. Riscrivila in modo che sia più chiara e persuasiva, senza perdere la vera essenza."
+            }},
+            { mod: 2, id: 6, name: {es: "6. Sobre Mí", en: "6. About Me", pt: "6. Sobre Mim", de: "6. Über Mich", fr: "6. À Propos", it: "6. Su di Me"},
+              text: {
+                es: "Escribe el texto para mi página 'Sobre Mí'. Usa el viaje del héroe. Empieza con mis orígenes humildes, mi lucha en [NICHO] y cómo descubrí el método que enseño hoy.",
+                en: "Write the text for my 'About Me' page. Use the hero's journey. Start with my humble beginnings, my struggle in [NICHE], and how I discovered the method I teach today.",
+                pt: "Escreva o texto para minha página 'Sobre Mim'. Use a jornada do herói. Comece com minhas origens humildes, minha luta em [NICHO] e como descobri o método que ensino hoje.",
+                de: "Schreiben Sie den Text für meine 'Über Mich'-Seite. Verwenden Sie die Heldenreise. Beginnen Sie mit meinen bescheidenen Anfängen, meinem Kampf in [NISCHE] und wie ich die Methode entdeckt habe, die ich heute lehre.",
+                fr: "Écrivez le texte de ma page 'À Propos'. Utilisez le voyage du héros. Commencez par mes origines modestes, ma lutte dans [NICHE] et comment j'ai découvert la méthode que j'enseigne aujourd'hui.",
+                it: "Scrivi il testo per la mia pagina 'Su di Me'. Usa il viaggio dell'eroe. Inizia con le mie umili origini, la mia lotta in [NICCHIA] e come ho scoperto il metodo che insegno oggi."
+            }},
+            { mod: 2, id: 7, name: {es: "7. Retargeting", en: "7. Retargeting", pt: "7. Retargeting", de: "7. Retargeting", fr: "7. Retargeting", it: "7. Retargeting"},
+              text: {
+                es: "Escribe un anuncio para personas que vieron mi producto pero no compraron. Usa un tono de '¿Todavía tienes dudas?' o 'Se te acaba el tiempo'.",
+                en: "Write an ad for people who viewed my product but didn't buy. Use a tone of 'Do you still have doubts?' or 'Time is running out'.",
+                pt: "Escreva um anúncio para pessoas que viram meu produto, mas não compraram. Use um tom de 'Você ainda tem dúvidas?' ou 'Seu tempo está acabando'.",
+                de: "Schreiben Sie eine Anzeige für Personen, die mein Produkt angesehen, aber nicht gekauft haben. Verwenden Sie einen Ton von 'Haben Sie noch Zweifel?' oder 'Die Zeit läuft ab'.",
+                fr: "Écrivez une publicité pour les personnes qui ont vu mon produit mais n'ont pas acheté. Utilisez un ton 'Avez-vous encore des doutes ?' ou 'Le temps presse'.",
+                it: "Scrivi un annuncio per le persone che hanno visto il mio prodotto ma non hanno acquistato. Usa un tono 'Hai ancora dubbi?' o 'Il tempo sta scadendo'."
+            }},
+            { mod: 2, id: 8, name: {es: "8. Micro-Copy", en: "8. Micro-Copy", pt: "8. Micro-Copy", de: "8. Micro-Copy", fr: "8. Micro-Copy", it: "8. Micro-Copy"},
+              text: {
+                es: "Escribe 3 frases cortas para poner cerca del botón de pago que den seguridad (ej: sobre la garantía, seguridad de datos o envío inmediato).",
+                en: "Write 3 short phrases to put near the checkout button that give security (e.g., about guarantee, data security, or immediate shipping).",
+                pt: "Escreva 3 frases curtas para colocar perto do botão de pagamento que deem segurança (ex: sobre garantia, segurança de dados ou envio imediato).",
+                de: "Schreiben Sie 3 kurze Sätze, die in der Nähe des Kaufbuttons platziert werden und Sicherheit vermitteln (z.B. über Garantie, Datensicherheit oder sofortigen Versand).",
+                fr: "Écrivez 3 phrases courtes à placer près du bouton de paiement pour rassurer (ex: sur la garantie, la sécurité des données ou l'envoi immédiat).",
+                it: "Scrivi 3 frasi brevi da mettere vicino al pulsante di pagamento che diano sicurezza (es: sulla garanzia, sicurezza dei dati o spedizione immediata)."
+            }},
+            { mod: 2, id: 9, name: {es: "9. Upsell", en: "9. Upsell", pt: "9. Upsell", de: "9. Upsell", fr: "9. Upsell", it: "9. Upsell"},
+              text: {
+                es: "Escribe un guion para un video corto de agradecimiento que intente vender un segundo producto ([PRODUCTO 2]) inmediatamente después de la primera compra.",
+                en: "Write a script for a short thank you video attempting to sell a second product ([PRODUCT 2]) immediately after the first purchase.",
+                pt: "Escreva um roteiro para um vídeo curto de agradecimento tentando vender um segundo produto ([PRODUTO 2]) imediatamente após a primeira compra.",
+                de: "Schreiben Sie ein Skript für ein kurzes Dankeschön-Video, das versucht, ein zweites Produkt ([PRODUKT 2]) unmittelbar nach dem ersten Kauf zu verkaufen.",
+                fr: "Écrivez un script pour une courte vidéo de remerciement tentant de vendre un deuxième produit ([PRODUIT 2]) immédiatement après le premier achat.",
+                it: "Scrivi una sceneggiatura per un breve video di ringraziamento che tenti di vendere un secondo prodotto ([PRODOTTO 2]) immediatamente dopo il primo acquisto."
+            }},
+            { mod: 2, id: 10, name: {es: "10. Carrito Aban.", en: "10. Abandoned Cart", pt: "10. Carrinho Aban.", de: "10. Warenkorb", fr: "10. Panier Aban.", it: "10. Carrello Abb."},
+              text: {
+                es: "Redacta un email gracioso y cero agresivo para alguien que dejó el carrito lleno. Asunto: '¿Te olvidaste de esto?'.",
+                en: "Write a funny and non-aggressive email for someone who left a full cart. Subject: 'Did you forget this?'.",
+                pt: "Escreva um e-mail engraçado e nada agressivo para alguém que deixou o carrinho cheio. Assunto: 'Você esqueceu disso?'.",
+                de: "Verfassen Sie eine lustige und überhaupt nicht aggressive E-Mail für jemanden, der den Warenkorb voll gelassen hat. Betreff: 'Hast du das vergessen?'.",
+                fr: "Rédigez un e-mail drôle et pas du tout agressif pour quelqu'un qui a laissé son panier plein. Objet : 'Tu as oublié ça ?'.",
+                it: "Scrivi un'email divertente e per nulla aggressiva per qualcuno che ha lasciato il carrello pieno. Oggetto: 'Hai dimenticato questo?'."
+            }},
+            { mod: 2, id: 11, name: {es: "11. Fórmula PAS", en: "11. PAS Formula", pt: "11. Fórmula PAS", de: "11. PAS-Formel", fr: "11. Formule PAS", it: "11. Formula PAS"},
+              text: {
+                es: "Escribe un post de ventas usando PAS sobre [DOLOR_CLIENTE] y cómo [PRODUCTO] lo resuelve.",
+                en: "Write a sales post using PAS about [CLIENT_PAIN] and how [PRODUCT] solves it.",
+                pt: "Escreva um post de vendas usando PAS sobre [DOR_CLIENTE] e como [PRODUTO] resolve isso.",
+                de: "Schreiben Sie einen Verkaufsbeitrag mit PAS über [KUNDENSCHMERZ] und wie [PRODUKT] ihn löst.",
+                fr: "Écrivez un post de vente utilisant PAS sur [DOULEUR_CLIENT] et comment [PRODUIT] le résout.",
+                it: "Scrivi un post di vendita usando PAS su [DOLORE_CLIENTE] e come [PRODOTTO] lo risolve."
+            }},
+            { mod: 2, id: 12, name: {es: "12. FAQ Persuasivo", en: "12. Persuasive FAQ", pt: "12. FAQ Persuasivo", de: "12. FAQ", fr: "12. FAQ Persuasive", it: "12. FAQ Persuasiva"},
+              text: {
+                es: "Crea una sección de 5 preguntas frecuentes para [PRODUCTO] donde cada respuesta sea una oportunidad para vender más.",
+                en: "Create a section of 5 FAQs for [PRODUCT] where each answer is an opportunity to sell more.",
+                pt: "Crie uma seção de 5 perguntas frequentes para [PRODUTO] onde cada resposta seja uma oportunidade de vender mais.",
+                de: "Erstellen Sie einen Abschnitt mit 5 häufig gestellten Fragen zu [PRODUKT], bei dem jede Antwort eine Gelegenheit ist, mehr zu verkaufen.",
+                fr: "Créez une section de 5 FAQ pour [PRODUIT] où chaque réponse est une opportunité de vendre plus.",
+                it: "Crea una sezione di 5 domande frequenti per [PRODOTTO] dove ogni risposta è un'opportunità per vendere di più."
+            }},
+            { mod: 2, id: 13, name: {es: "13. Copy Botones", en: "13. Button Copy", pt: "13. Copy Botões", de: "13. Button-Text", fr: "13. Copy Boutons", it: "13. Copy Pulsanti"},
+              text: {
+                es: "Dame 15 variaciones de texto para un botón de compra que no sean 'Comprar ahora'. Usa verbos de acción y beneficio.",
+                en: "Give me 15 text variations for a buy button that aren't 'Buy Now'. Use action verbs and benefits.",
+                pt: "Dê-me 15 variações de texto para um botão de compra que não sejam 'Comprar agora'. Use verbos de ação e benefício.",
+                de: "Geben Sie mir 15 Textvariationen für einen Kaufbutton, die nicht 'Jetzt kaufen' lauten. Verwenden Sie Aktionsverben und Nutzen.",
+                fr: "Donnez-moi 15 variations de texte pour un bouton d'achat qui ne soient pas 'Acheter maintenant'. Utilisez des verbes d'action et des avantages.",
+                it: "Dammi 15 varianti di testo per un pulsante di acquisto che non siano 'Acquista ora'. Usa verbi d'azione e vantaggi."
+            }},
+            { mod: 2, id: 14, name: {es: "14. Fórmula BAB", en: "14. BAB Formula", pt: "14. Fórmula BAB", de: "14. BAB-Formel", fr: "14. Formule BAB", it: "14. Formula BAB"},
+              text: {
+                es: "Escribe un anuncio corto usando BAB para [PRODUCTO]. Muestra el desastre de hoy, el paraíso de mañana y mi producto como el puente.",
+                en: "Write a short ad using BAB for [PRODUCT]. Show today's disaster, tomorrow's paradise, and my product as the bridge.",
+                pt: "Escreva um anúncio curto usando BAB para [PRODUTO]. Mostre o desastre de hoje, o paraíso de amanhã e meu produto como a ponte.",
+                de: "Schreiben Sie eine kurze Anzeige mit BAB für [PRODUKT]. Zeigen Sie das heutige Desaster, das morgige Paradies und mein Produkt als Brücke.",
+                fr: "Écrivez une courte publicité utilisant BAB pour [PRODUIT]. Montrez le désastre d'aujourd'hui, le paradis de demain et mon produit comme le pont.",
+                it: "Scrivi un breve annuncio usando BAB per [PRODOTTO]. Mostra il disastro di oggi, il paradiso di domani e il mio prodotto come il ponte."
+            }},
+            { mod: 2, id: 15, name: {es: "15. Meta-Desc", en: "15. Meta-Desc", pt: "15. Meta-Desc", de: "15. Meta-Beschr", fr: "15. Méta-Desc", it: "15. Meta-Desc"},
+              text: {
+                es: "Escribe la meta-descripción SEO para mi landing de [PRODUCTO] que maximice el clic desde Google.",
+                en: "Write the SEO meta-description for my [PRODUCT] landing page to maximize clicks from Google.",
+                pt: "Escreva a meta-descrição SEO para minha landing page de [PRODUTO] para maximizar cliques do Google.",
+                de: "Schreiben Sie die SEO-Meta-Beschreibung für meine [PRODUKT]-Landingpage, um Klicks von Google zu maximieren.",
+                fr: "Écrivez la méta-description SEO pour ma landing page de [PRODUIT] pour maximiser les clics depuis Google.",
+                it: "Scrivi la meta-descrizione SEO per la mia landing page di [PRODOTTO] per massimizzare i clic da Google."
+            }},
+            { mod: 2, id: 16, name: {es: "16. Escasez Real", en: "16. Real Scarcity", pt: "16. Escassez Real", de: "16. Echte Knappheit", fr: "16. Vraie Rareté", it: "16. Scarsità Reale"},
+              text: {
+                es: "Escribe un mensaje para mi web anunciando que solo quedan [X] cupos o [X] horas. Debe sonar urgente pero honesto.",
+                en: "Write a message for my website announcing only [X] spots or [X] hours left. Must sound urgent but honest.",
+                pt: "Escreva uma mensagem para meu site anunciando que restam apenas [X] vagas ou [X] horas. Deve soar urgente, mas honesto.",
+                de: "Schreiben Sie eine Nachricht für meine Website, die ankündigt, dass nur noch [X] Plätze oder [X] Stunden übrig sind. Muss dringend, aber ehrlich klingen.",
+                fr: "Écrivez un message pour mon site annonçant qu'il ne reste que [X] places ou [X] heures. Doit sembler urgent mais honnête.",
+                it: "Scrivi un messaggio per il mio sito annunciando che rimangono solo [X] posti o [X] ore. Deve suonare urgente ma onesto."
+            }},
+            { mod: 2, id: 17, name: {es: "17. Carta Ventas", en: "17. Sales Letter", pt: "17. Carta Vendas", de: "17. Verkaufsbrief", fr: "17. Lettre Vente", it: "17. Lettera Vendita"},
+              text: {
+                es: "Escribe una carta de ventas corta (estilo Gary Halbert) para vender [PRODUCTO] centrada en una gran promesa.",
+                en: "Write a short sales letter (Gary Halbert style) to sell [PRODUCT] focused on a big promise.",
+                pt: "Escreva uma carta de vendas curta (estilo Gary Halbert) para vender [PRODUTO] focada em uma grande promessa.",
+                de: "Schreiben Sie einen kurzen Verkaufsbrief (Gary-Halbert-Stil), um [PRODUKT] zu verkaufen, fokussiert auf ein großes Versprechen.",
+                fr: "Écrivez une lettre de vente courte (style Gary Halbert) pour vendre [PRODUIT] centrée sur une grande promesse.",
+                it: "Scrivi una breve lettera di vendita (stile Gary Halbert) per vendere [PRODOTTO] focalizzata su una grande promessa."
+            }},
+            { mod: 2, id: 18, name: {es: "18. Google Search", en: "18. Google Search", pt: "18. Google Search", de: "18. Google Search", fr: "18. Google Search", it: "18. Google Search"},
+              text: {
+                es: "Escribe 3 variaciones de anuncios para Google Ads (Títulos y Descripciones) para la palabra clave [KEYWORD].",
+                en: "Write 3 variations of ads for Google Ads (Headlines and Descriptions) for the keyword [KEYWORD].",
+                pt: "Escreva 3 variações de anúncios para Google Ads (Títulos e Descrições) para a palavra-chave [KEYWORD].",
+                de: "Schreiben Sie 3 Anzeigenvariationen für Google Ads (Titel und Beschreibungen) für das Keyword [KEYWORD].",
+                fr: "Écrivez 3 variations d'annonces pour Google Ads (Titres et Descriptions) pour le mot-clé [KEYWORD].",
+                it: "Scrivi 3 varianti di annunci per Google Ads (Titoli e Descrizioni) per la parola chiave [KEYWORD]."
+            }},
+            { mod: 2, id: 19, name: {es: "19. Re-escritor", en: "19. Rewriter", pt: "19. Reescritor", de: "19. Umschreiber", fr: "19. Réécrivain", it: "19. Riscritore"},
+              text: {
+                es: "Toma este texto y hazlo sexy, corto y que den ganas de leerlo: [PEGAR_TEXTO].",
+                en: "Take this text and make it sexy, short, and readable: [PASTE_TEXT].",
+                pt: "Pegue este texto e torne-o sexy, curto e que dê vontade de ler: [COLAR_TEXTO].",
+                de: "Nehmen Sie diesen Text und machen Sie ihn sexy, kurz und lesenswert: [TEXT_EINFÜGEN].",
+                fr: "Prenez ce texte et rendez-le sexy, court et agréable à lire : [COLLER_TEXTE].",
+                it: "Prendi questo testo e rendilo sexy, breve e piacevole da leggere: [INCOLLA_TESTO]."
+            }},
+            { mod: 2, id: 20, name: {es: "20. Gran Idea", en: "20. Big Idea", pt: "20. Grande Ideia", de: "20. Große Idee", fr: "20. Grande Idée", it: "20. Grande Idea"},
+              text: {
+                es: "Ayúdame a encontrar el ángulo único (Big Idea) para mi campaña de [PRODUCTO] que nadie más esté usando en mi nicho.",
+                en: "Help me find the unique angle (Big Idea) for my [PRODUCT] campaign that no one else is using in my niche.",
+                pt: "Ajude-me a encontrar o ângulo único (Big Idea) para minha campanha de [PRODUTO] que ninguém mais esteja usando no meu nicho.",
+                de: "Helfen Sie mir, den einzigartigen Blickwinkel (Big Idea) für meine [PRODUKT]-Kampagne zu finden, den sonst niemand in meiner Nische nutzt.",
+                fr: "Aidez-moi à trouver l'angle unique (Big Idea) pour ma campagne [PRODUIT] que personne d'autre n'utilise dans ma niche.",
+                it: "Aiutami a trovare l'angolo unico (Big Idea) per la mia campagna [PRODOTTO] che nessun altro sta usando nella mia nicchia."
+            }},
+            { mod: 2, id: 21, name: {es: "21. Order Bump", en: "21. Order Bump", pt: "21. Order Bump", de: "21. Order Bump", fr: "21. Order Bump", it: "21. Order Bump"},
+              text: {
+                es: "Escribe el texto de 2 frases para una oferta pequeña de $[PRECIO] que aparece justo antes de pagar [PRODUCTO].",
+                en: "Write 2-sentence copy for a small offer of $[PRICE] appearing just before paying for [PRODUCT].",
+                pt: "Escreva o texto de 2 frases para uma oferta pequena de $[PRECO] que aparece logo antes de pagar [PRODUTO].",
+                de: "Schreiben Sie einen 2-Satz-Text für ein kleines Angebot von $[PREIS], das kurz vor der Bezahlung von [PRODUKT] erscheint.",
+                fr: "Écrivez le texte de 2 phrases pour une petite offre de $[PRIX] apparaissant juste avant de payer [PRODUIT].",
+                it: "Scrivi il testo di 2 frasi per una piccola offerta di $[PREZZO] che appare subito prima di pagare [PRODOTTO]."
+            }},
+            { mod: 2, id: 22, name: {es: "22. Ganchos", en: "22. Hooks", pt: "22. Ganchos", de: "22. Hooks", fr: "22. Accroches", it: "22. Ganci"},
+              text: {
+                es: "Dame 10 frases de apertura para un anuncio de video que detengan el scroll de alguien interesado en [NICHO].",
+                en: "Give me 10 opening phrases for a video ad that stop the scroll of someone interested in [NICHE].",
+                pt: "Dê-me 10 frases de abertura para um anúncio em vídeo que parem o scroll de alguém interessado em [NICHO].",
+                de: "Geben Sie mir 10 Eröffnungssätze für eine Videoanzeige, die das Scrollen von jemandem stoppen, der an [NISCHE] interessiert ist.",
+                fr: "Donnez-moi 10 phrases d'ouverture pour une publicité vidéo qui arrêtent le défilement de quelqu'un intéressé par [NICHE].",
+                it: "Dammi 10 frasi di apertura per un video pubblicitario che fermino lo scorrimento di qualcuno interessato a [NICCHIA]."
+            }},
+            { mod: 2, id: 23, name: {es: "23. Invitación", en: "23. Invite", pt: "23. Convite", de: "23. Einladung", fr: "23. Invitation", it: "23. Invito"},
+              text: {
+                es: "Escribe el texto para una invitación por WhatsApp a un evento exclusivo sobre [TEMA]. Debe ser personal y directo.",
+                en: "Write the text for a WhatsApp invitation to an exclusive event about [TOPIC]. Must be personal and direct.",
+                pt: "Escreva o texto para um convite por WhatsApp para um evento exclusivo sobre [TEMA]. Deve ser pessoal e direto.",
+                de: "Schreiben Sie den Text für eine WhatsApp-Einladung zu einem exklusiven Event über [THEMA]. Muss persönlich und direkt sein.",
+                fr: "Écrivez le texte pour une invitation WhatsApp à un événement exclusif sur [SUJET]. Doit être personnel et direct.",
+                it: "Scrivi il testo per un invito WhatsApp a un evento esclusivo su [ARGOMENTO]. Deve essere personale e diretto."
+            }},
+            { mod: 2, id: 24, name: {es: "24. 4 Ps", en: "24. 4 Ps", pt: "24. 4 Ps", de: "24. 4 Ps", fr: "24. 4 Ps", it: "24. 4 Ps"},
+              text: {
+                es: "Escribe un email de venta usando la estructura de las 4 Pes (Promise, Picture, Proof, Push) para [PRODUCTO].",
+                en: "Write a sales email using the 4 Ps structure (Promise, Picture, Proof, Push) for [PRODUCT].",
+                pt: "Escreva um e-mail de vendas usando a estrutura dos 4 Ps (Promessa, Pintura, Prova, Empurrão) para [PRODUTO].",
+                de: "Schreiben Sie eine Verkaufs-E-Mail nach der 4-P-Struktur (Promise, Picture, Proof, Push) für [PRODUKT].",
+                fr: "Écrivez un e-mail de vente en utilisant la structure des 4 P (Promesse, Peinture, Preuve, Poussée) pour [PRODUIT].",
+                it: "Scrivi un'email di vendita usando la struttura delle 4 P (Promessa, Pittura, Prova, Spinta) per [PRODOTTO]."
+            }},
+            { mod: 2, id: 25, name: {es: "25. Beneficios", en: "25. Benefits", pt: "25. Benefícios", de: "25. Vorteile", fr: "25. Avantages", it: "25. Benefici"},
+              text: {
+                es: "Transforma este beneficio: [BENEFICIO_SIMPLE] en algo que haga que el cliente sienta que está perdiendo dinero si no lo tiene.",
+                en: "Transform this benefit: [SIMPLE_BENEFIT] into something that makes the customer feel they are losing money if they don't have it.",
+                pt: "Transforme este benefício: [BENEFICIO_SIMPLES] em algo que faça o cliente sentir que está perdendo dinheiro se não o tiver.",
+                de: "Verwandeln Sie diesen Vorteil: [EINFACHER_VORTEIL] in etwas, das dem Kunden das Gefühl gibt, Geld zu verlieren, wenn er es nicht hat.",
+                fr: "Transformez cet avantage : [AVANTAGE_SIMPLE] en quelque chose qui donne au client l'impression de perdre de l'argent s'il ne l'a pas.",
+                it: "Trasforma questo beneficio: [BENEFICIO_SEMPLICE] in qualcosa che faccia sentire al cliente che sta perdendo soldi se non lo ha."
+            }},
+            { mod: 2, id: 26, name: {es: "26. Pág Gracias", en: "26. Thank You Pg", pt: "26. Pág Obrigado", de: "26. Danke Seite", fr: "26. Page Merci", it: "26. Pagina Grazie"},
+              text: {
+                es: "Escribe el texto para la página que ven después de suscribirse. Debe confirmar el éxito y dar el siguiente paso.",
+                en: "Write the text for the page seen after subscribing. Must confirm success and give the next step.",
+                pt: "Escreva o texto para a página vista após a inscrição. Deve confirmar o sucesso e dar o próximo passo.",
+                de: "Schreiben Sie den Text für die Seite, die nach dem Abonnieren angezeigt wird. Muss den Erfolg bestätigen und den nächsten Schritt angeben.",
+                fr: "Écrivez le texte pour la page vue après l'inscription. Doit confirmer le succès et donner la prochaine étape.",
+                it: "Scrivi il testo per la pagina vista dopo l'iscrizione. Deve confermare il successo e dare il passo successivo."
+            }},
+            { mod: 2, id: 27, name: {es: "27. Garantía Res", en: "27. Result Guar", pt: "27. Garantia Res", de: "27. Ergebnisgar", fr: "27. Garantie Rés", it: "27. Garanzia Ris"},
+              text: {
+                es: "Redacta una garantía basada en resultados (ej: si no logras X en Y tiempo, te devuelvo Z) para [PRODUCTO].",
+                en: "Write a result-based guarantee (e.g., if you don't achieve X in Y time, I return Z) for [PRODUCT].",
+                pt: "Redija uma garantia baseada em resultados (ex: se não conseguir X em Y tempo, devolvo Z) para [PRODUTO].",
+                de: "Verfassen Sie eine ergebnisorientierte Garantie (z.B. wenn Sie X in Y Zeit nicht erreichen, gebe ich Z zurück) für [PRODUKT].",
+                fr: "Rédigez une garantie basée sur les résultats (ex: si vous n'atteignez pas X en Y temps, je rends Z) pour [PRODUIT].",
+                it: "Scrivi una garanzia basata sui risultati (es: se non raggiungi X in Y tempo, ti restituisco Z) per [PRODOTTO]."
+            }},
+            { mod: 2, id: 28, name: {es: "28. Testimonio Vid", en: "28. Video Testim", pt: "28. Testemunho Vid", de: "28. Video Testim", fr: "28. Témoignage Vid", it: "28. Testimonianza Vid"},
+              text: {
+                es: "Dame un cuestionario de 5 preguntas que debo enviarle a mis clientes para que graben un testimonio perfecto.",
+                en: "Give me a 5-question questionnaire to send to my customers so they record a perfect testimonial.",
+                pt: "Dê-me um questionário de 5 perguntas para enviar aos meus clientes para que gravem um depoimento perfeito.",
+                de: "Geben Sie mir einen Fragebogen mit 5 Fragen, den ich meinen Kunden senden kann, damit sie ein perfektes Testimonial aufnehmen.",
+                fr: "Donnez-moi un questionnaire de 5 questions à envoyer à mes clients pour qu'ils enregistrent un témoignage parfait.",
+                it: "Dammi un questionario di 5 domande da inviare ai miei clienti affinché registrino una testimonianza perfetta."
+            }},
+            { mod: 2, id: 29, name: {es: "29. Comparativa", en: "29. Comparison", pt: "29. Comparativo", de: "29. Vergleich", fr: "29. Comparaison", it: "29. Confronto"},
+              text: {
+                es: "Crea una tabla o lista comparativa resaltando por qué [MI_PRODUCTO] es mejor que la competencia tradicional.",
+                en: "Create a comparison table or list highlighting why [MY_PRODUCT] is better than traditional competition.",
+                pt: "Crie uma tabela ou lista comparativa destacando por que [MEU_PRODUTO] é melhor que a concorrência tradicional.",
+                de: "Erstellen Sie eine Vergleichstabelle oder -liste, die hervorhebt, warum [MEIN_PRODUKT] besser ist als die traditionelle Konkurrenz.",
+                fr: "Créez un tableau ou une liste comparative soulignant pourquoi [MON_PRODUIT] est meilleur que la concurrence traditionnelle.",
+                it: "Crea una tabella o elenco comparativo evidenziando perché [MIO_PRODOTTO] è migliore della concorrenza tradizionale."
+            }},
+            { mod: 2, id: 30, name: {es: "30. Términos", en: "30. Terms", pt: "30. Termos", de: "30. Bedingungen", fr: "30. Termes", it: "30. Termini"},
+              text: {
+                es: "Haz que mis políticas de reembolso suenen amigables y humanas en lugar de un texto legal frío.",
+                en: "Make my refund policies sound friendly and human instead of cold legal text.",
+                pt: "Faça minhas políticas de reembolso soarem amigáveis e humanas em vez de um texto legal frio.",
+                de: "Lassen Sie meine Rückerstattungsrichtlinien freundlich und menschlich klingen anstatt wie ein kalter Gesetzestext.",
+                fr: "Faites en sorte que mes politiques de remboursement semblent amicales et humaines au lieu d'un texte juridique froid.",
+                it: "Rendi le mie politiche di rimborso amichevoli e umane invece di un freddo testo legale."
+            }},
+
+            // --- MÓDULO 4: EMAIL MARKETING (1-30) ---
+            { mod: 3, id: 1, name: {es: "1. Email Bienvenida", en: "1. Welcome Email", pt: "1. Email Boas-vindas", de: "1. Willkommens-E-Mail", fr: "1. Email Bienvenue", it: "1. Email Benvenuto"},
+              text: {
+                es: "Escribe el correo automático que se envía cuando alguien descarga mi guía gratuita. Entrega el regalo, preséntate brevemente y establece expectativas.",
+                en: "Write the automatic email sent when someone downloads my free guide. Deliver the gift, introduce yourself briefly, and set expectations.",
+                pt: "Escreva o e-mail automático enviado quando alguém baixa meu guia gratuito. Entregue o presente, apresente-se brevemente e defina expectativas.",
+                de: "Schreiben Sie die automatische E-Mail, die gesendet wird, wenn jemand meinen kostenlosen Leitfaden herunterlädt. Übergeben Sie das Geschenk, stellen Sie sich kurz vor und setzen Sie Erwartungen.",
+                fr: "Écrivez l'e-mail automatique envoyé lorsque quelqu'un télécharge mon guide gratuit. Livrez le cadeau, présentez-vous brièvement et définissez les attentes.",
+                it: "Scrivi l'email automatica inviata quando qualcuno scarica la mia guida gratuita. Consegna il regalo, presentati brevemente e definisci le aspettative."
+            }},
+            { mod: 3, id: 2, name: {es: "2. Adoctrinamiento", en: "2. Indoctrination", pt: "2. Doutrinação", de: "2. Indoktrination", fr: "2. Indoctrination", it: "2. Indottrinamento"},
+              text: {
+                es: "Escribe los esquemas para 3 correos de bienvenida. Día 1: Quién soy. Día 2: Por qué hago lo que hago (Misión). Día 3: Cómo puedo ayudarte (Productos).",
+                en: "Write outlines for 3 welcome emails. Day 1: Who I am. Day 2: Why I do what I do (Mission). Day 3: How I can help you (Products).",
+                pt: "Escreva os esboços para 3 e-mails de boas-vindas. Dia 1: Quem sou eu. Dia 2: Por que faço o que faço (Missão). Dia 3: Como posso ajudar (Produtos).",
+                de: "Schreiben Sie Gliederungen für 3 Willkommens-E-Mails. Tag 1: Wer ich bin. Tag 2: Warum ich tue, was ich tue (Mission). Tag 3: Wie ich Ihnen helfen kann (Produkte).",
+                fr: "Écrivez les grandes lignes de 3 e-mails de bienvenue. Jour 1 : Qui suis-je. Jour 2 : Pourquoi je fais ce que je fais (Mission). Jour 3 : Comment je peux vous aider (Produits).",
+                it: "Scrivi le bozze per 3 email di benvenuto. Giorno 1: Chi sono. Giorno 2: Perché faccio quello che faccio (Missione). Giorno 3: Come posso aiutarti (Prodotti)."
+            }},
+            { mod: 3, id: 3, name: {es: "3. Newsletter", en: "3. Newsletter", pt: "3. Newsletter", de: "3. Newsletter", fr: "3. Newsletter", it: "3. Newsletter"},
+              text: {
+                es: "Crea una plantilla para una newsletter semanal que incluya: Una reflexión personal, 3 enlaces de interés de mi industria y una recomendación de producto.",
+                en: "Create a template for a weekly newsletter including: A personal reflection, 3 interesting links from my industry, and a product recommendation.",
+                pt: "Crie um modelo para uma newsletter semanal que inclua: Uma reflexão pessoal, 3 links de interesse da minha indústria e uma recomendação de produto.",
+                de: "Erstellen Sie eine Vorlage für einen wöchentlichen Newsletter mit: Einer persönlichen Reflexion, 3 interessanten Links aus meiner Branche und einer Produktempfehlung.",
+                fr: "Créez un modèle pour une newsletter hebdomadaire comprenant : Une réflexion personnelle, 3 liens intéressants de mon industrie et une recommandation de produit.",
+                it: "Crea un modello per una newsletter settimanale che includa: Una riflessione personale, 3 link interessanti della mia industria e una raccomandazione di prodotto."
+            }},
+            { mod: 3, id: 4, name: {es: "4. Venta Directa", en: "4. Hard Sell", pt: "4. Venda Direta", de: "4. Hard Sell", fr: "4. Vente Directe", it: "4. Vendita Diretta"},
+              text: {
+                es: "Escribe un correo diseñado puramente para vender. Usa la técnica de 'Problema -> Agitación -> Solución'. Sé directo y usa un botón claro.",
+                en: "Write an email designed purely to sell. Use the 'Problem -> Agitation -> Solution' technique. Be direct and use a clear button.",
+                pt: "Escreva um e-mail projetado puramente para vender. Use a técnica 'Problema -> Agitação -> Solução'. Seja direto e use um botão claro.",
+                de: "Schreiben Sie eine E-Mail, die rein zum Verkaufen gedacht ist. Verwenden Sie die Technik 'Problem -> Agitation -> Lösung'. Seien Sie direkt und verwenden Sie einen klaren Button.",
+                fr: "Écrivez un e-mail conçu uniquement pour vendre. Utilisez la technique 'Problème -> Agitation -> Solution'. Soyez direct et utilisez un bouton clair.",
+                it: "Scrivi un'email progettata puramente per vendere. Usa la tecnica 'Problema -> Agitazione -> Soluzione'. Sii diretto e usa un pulsante chiaro."
+            }},
+            { mod: 3, id: 5, name: {es: "5. Reactivación", en: "5. Reactivation", pt: "5. Reativação", de: "5. Reaktivierung", fr: "5. Réactivation", it: "5. Riattivazione"},
+              text: {
+                es: "Escribe un correo para suscriptores que no han abierto mis emails en 3 meses. Asunto: '¿Sigues ahí?'. Objetivo: Que respondan o se den de baja.",
+                en: "Write an email for subscribers who haven't opened my emails in 3 months. Subject: 'Still there?'. Goal: Get a reply or unsubscribe.",
+                pt: "Escreva um e-mail para assinantes que não abriram meus e-mails em 3 meses. Assunto: 'Ainda aí?'. Objetivo: Responder ou cancelar inscrição.",
+                de: "Schreiben Sie eine E-Mail an Abonnenten, die meine E-Mails seit 3 Monaten nicht geöffnet haben. Betreff: 'Noch da?'. Ziel: Antwort oder Abmeldung.",
+                fr: "Écrivez un e-mail pour les abonnés qui n'ont pas ouvert mes e-mails depuis 3 mois. Objet : 'Toujours là ?'. But : Réponse ou désabonnement.",
+                it: "Scrivi un'email per gli abbonati che non hanno aperto le mie email da 3 mesi. Oggetto: 'Sei ancora lì?'. Obiettivo: Risposta o cancellazione."
+            }},
+            { mod: 3, id: 6, name: {es: "6. Feedback", en: "6. Feedback", pt: "6. Feedback", de: "6. Feedback", fr: "6. Feedback", it: "6. Feedback"},
+              text: {
+                es: "Escribe un correo preguntando a mi audiencia cuál es su mayor desafío actual en [NICHO]. El objetivo es sacar ideas para nuevos productos.",
+                en: "Write an email asking my audience what their biggest current challenge in [NICHE] is. Goal: Get ideas for new products.",
+                pt: "Escreva um e-mail perguntando ao meu público qual é o maior desafio atual em [NICHO]. O objetivo é obter ideias para novos produtos.",
+                de: "Schreiben Sie eine E-Mail und fragen Sie mein Publikum nach ihrer größten aktuellen Herausforderung in [NISCHE]. Ziel: Ideen für neue Produkte.",
+                fr: "Écrivez un e-mail demandant à mon public quel est son plus grand défi actuel dans [NICHE]. But : Obtenir des idées pour de nouveaux produits.",
+                it: "Scrivi un'email chiedendo al mio pubblico qual è la loro più grande sfida attuale in [NICCHIA]. Obiettivo: Ottenere idee per nuovi prodotti."
+            }},
+            { mod: 3, id: 7, name: {es: "7. Lanzamiento PLF", en: "7. PLF Launch", pt: "7. Lançamento PLF", de: "7. PLF-Launch", fr: "7. Lancement PLF", it: "7. Lancio PLF"},
+              text: {
+                es: "Dame la estructura de 4 correos para un lanzamiento. 1. Anticipación (Algo viene). 2. Educación (Por qué necesitas esto). 3. Apertura de Carrito (Ya está aquí). 4. Cierre (Últimas horas).",
+                en: "Give me the structure of 4 launch emails. 1. Anticipation (Something coming). 2. Education (Why you need this). 3. Cart Open (It's here). 4. Close (Last hours).",
+                pt: "Dê-me a estrutura de 4 e-mails para um lançamento. 1. Antecipação (Algo vem aí). 2. Educação (Por que precisa disso). 3. Abertura Carrinho (Chegou). 4. Fechamento (Últimas horas).",
+                de: "Geben Sie mir die Struktur von 4 Launch-E-Mails. 1. Vorfreude (Etwas kommt). 2. Bildung (Warum du das brauchst). 3. Warenkorb offen (Es ist da). 4. Abschluss (Letzte Stunden).",
+                fr: "Donnez-moi la structure de 4 e-mails de lancement. 1. Anticipation (Quelque chose arrive). 2. Éducation (Pourquoi vous avez besoin de ça). 3. Ouverture Panier (C'est là). 4. Clôture (Dernières heures).",
+                it: "Dammi la struttura di 4 email di lancio. 1. Anticipazione (Qualcosa sta arrivando). 2. Educazione (Perché ne hai bisogno). 3. Apertura Carrello (È qui). 4. Chiusura (Ultime ore)."
+            }},
+            { mod: 3, id: 8, name: {es: "8. Historia Metáfora", en: "8. Metaphor Story", pt: "8. História Metáfora", de: "8. Metaphern-Story", fr: "8. Histoire Métaphore", it: "8. Storia Metafora"},
+              text: {
+                es: "Escribe un email que empiece contando una historia sobre [TEMA_COTIDIANO] y úsala como metáfora para enseñar una lección sobre [NICHO].",
+                en: "Write an email starting with a story about [DAILY_TOPIC] and use it as a metaphor to teach a lesson about [NICHE].",
+                pt: "Escreva um e-mail começando com uma história sobre [TEMA_COTIDIANO] e use-a como metáfora para ensinar uma lição sobre [NICHO].",
+                de: "Schreiben Sie eine E-Mail, die mit einer Geschichte über [ALLTAGSTHEMA] beginnt und sie als Metapher nutzt, um eine Lektion über [NISCHE] zu lehren.",
+                fr: "Écrivez un e-mail commençant par une histoire sur [SUJET_QUOTIDIEN] et utilisez-la comme métaphore pour enseigner une leçon sur [NICHE].",
+                it: "Scrivi un'email iniziando con una storia su [ARGOMENTO_QUOTIDIANO] e usala come metafora per insegnare una lezione su [NICCHIA]."
+            }},
+            { mod: 3, id: 9, name: {es: "9. Cold Email", en: "9. Cold Email", pt: "9. Cold Email", de: "9. Kaltakquise-Email", fr: "9. Cold Email", it: "9. Cold Email"},
+              text: {
+                es: "Escribe un correo en frío para ofrecer mis servicios a [TIPO_DE_EMPRESA]. Debe ser corto, personalizado y centrado en el beneficio para ellos, no en mí.",
+                en: "Write a cold email to offer my services to [COMPANY_TYPE]. Must be short, personalized, and focused on benefit for them, not me.",
+                pt: "Escreva um e-mail frio para oferecer meus serviços a [TIPO_DE_EMPRESA]. Deve ser curto, personalizado e focado no benefício para eles, não em mim.",
+                de: "Schreiben Sie eine Kaltakquise-E-Mail, um meine Dienste [UNTERNEHMENSART] anzubieten. Muss kurz, personalisiert und auf ihren Nutzen fokussiert sein, nicht auf mich.",
+                fr: "Écrivez un cold email pour offrir mes services à [TYPE_ENTREPRISE]. Doit être court, personnalisé et axé sur le bénéfice pour eux, pas moi.",
+                it: "Scrivi un'email a freddo per offrire i miei servizi a [TIPO_AZIENDA]. Deve essere breve, personalizzata e focalizzata sul beneficio per loro, non su di me."
+            }},
+            { mod: 3, id: 10, name: {es: "10. Flash Sale", en: "10. Flash Sale", pt: "10. Flash Sale", de: "10. Blitzverkauf", fr: "10. Vente Flash", it: "10. Vendita Lampo"},
+              text: {
+                es: "Redacta un correo anunciando una oferta relámpago de 24 horas por motivo de [FESTIVIDAD_O_EXCUSA]. Mucha urgencia.",
+                en: "Write an email announcing a 24-hour flash sale for [HOLIDAY_OR_EXCUSE]. High urgency.",
+                pt: "Redija um e-mail anunciando uma oferta relâmpago de 24 horas por motivo de [FESTIVIDADE_OU_DESCULPA]. Muita urgência.",
+                de: "Verfassen Sie eine E-Mail, die einen 24-Stunden-Blitzverkauf wegen [FEIERTAG_ODER_AUSREDE] ankündigt. Hohe Dringlichkeit.",
+                fr: "Rédigez un e-mail annonçant une vente flash de 24 heures pour [FETE_OU_EXCUSE]. Grande urgence.",
+                it: "Scrivi un'email annunciando una vendita lampo di 24 ore per [FESTIVITA_O_SCUSA]. Alta urgenza."
+            }},
+            { mod: 3, id: 11, name: {es: "11. El Dedo en la Llaga", en: "11. Pain Point", pt: "11. Dedo na Ferida", de: "11. Schmerzpunkt", fr: "11. Point Douloureux", it: "11. Punto Dolente"},
+              text: {
+                es: "Escribe un email que hable sobre la consecuencia de NO resolver [PROBLEMA_CLIENTE] hoy mismo.",
+                en: "Write an email talking about the consequence of NOT solving [CLIENT_PROBLEM] today.",
+                pt: "Escreva um e-mail falando sobre a consequência de NÃO resolver [PROBLEMA_CLIENTE] hoje mesmo.",
+                de: "Schreiben Sie eine E-Mail über die Konsequenz, [KUNDENPROBLEM] heute NICHT zu lösen.",
+                fr: "Écrivez un e-mail parlant de la conséquence de NE PAS résoudre [PROBLEME_CLIENT] aujourd'hui.",
+                it: "Scrivi un'email parlando della conseguenza di NON risolvere [PROBLEMA_CLIENTE] oggi stesso."
+            }},
+            { mod: 3, id: 12, name: {es: "12. Carrito Lleno", en: "12. Full Cart", pt: "12. Carrinho Cheio", de: "12. Voller Warenkorb", fr: "12. Panier Plein", it: "12. Carrello Pieno"},
+              text: {
+                es: "Diseña 3 asuntos y cuerpos de correos para recuperar carritos abandonados: Día 1 Recordatorio, Día 2 Ayuda, Día 3 Descuento final.",
+                en: "Design 3 subjects and bodies for abandoned cart recovery emails: Day 1 Reminder, Day 2 Help, Day 3 Final Discount.",
+                pt: "Projete 3 assuntos e corpos de e-mails para recuperar carrinhos abandonados: Dia 1 Lembrete, Dia 2 Ajuda, Dia 3 Desconto final.",
+                de: "Entwerfen Sie 3 Betreffzeilen und Texte für Warenkorbabbruch-E-Mails: Tag 1 Erinnerung, Tag 2 Hilfe, Tag 3 Letzter Rabatt.",
+                fr: "Concevez 3 objets et corps d'e-mails pour récupérer les paniers abandonnés : Jour 1 Rappel, Jour 2 Aide, Jour 3 Remise finale.",
+                it: "Progetta 3 oggetti e corpi di email per recuperare i carrelli abbandonati: Giorno 1 Promemoria, Giorno 2 Aiuto, Giorno 3 Sconto finale."
+            }},
+            { mod: 3, id: 13, name: {es: "13. Anuncio Webinar", en: "13. Webinar Ad", pt: "13. Anúncio Webinar", de: "13. Webinar-Anzeige", fr: "13. Pub Webinaire", it: "13. Annuncio Webinar"},
+              text: {
+                es: "Escribe un correo invitando a mis suscriptores a una clase en vivo sobre [TEMA] resaltando 3 cosas que aprenderán.",
+                en: "Write an email inviting subscribers to a live class on [TOPIC] highlighting 3 things they will learn.",
+                pt: "Escreva um e-mail convidando meus assinantes para uma aula ao vivo sobre [TEMA] destacando 3 coisas que aprenderão.",
+                de: "Schreiben Sie eine E-Mail, die Abonnenten zu einer Live-Klasse über [THEMA] einlädt und 3 Dinge hervorhebt, die sie lernen werden.",
+                fr: "Écrivez un e-mail invitant les abonnés à un cours en direct sur [SUJET] soulignant 3 choses qu'ils apprendront.",
+                it: "Scrivi un'email invitando gli abbonati a una lezione dal vivo su [ARGOMENTO] evidenziando 3 cose che impareranno."
+            }},
+            { mod: 3, id: 14, name: {es: "14. Caso de Éxito", en: "14. Success Story", pt: "14. Caso de Sucesso", de: "14. Erfolgsgeschichte", fr: "14. Histoire Succès", it: "14. Storia Successo"},
+              text: {
+                es: "Escribe un email contando cómo [NOMBRE_CLIENTE] pasó de [ESTADO_A] a [ESTADO_B] usando mi método.",
+                en: "Write an email telling how [CLIENT_NAME] went from [STATE_A] to [STATE_B] using my method.",
+                pt: "Escreva um e-mail contando como [NOME_CLIENTE] passou de [ESTADO_A] para [ESTADO_B] usando meu método.",
+                de: "Schreiben Sie eine E-Mail, wie [KUNDENNAME] mit meiner Methode von [ZUSTAND_A] zu [ZUSTAND_B] kam.",
+                fr: "Écrivez un e-mail racontant comment [NOM_CLIENT] est passé de [ETAT_A] à [ETAT_B] en utilisant ma méthode.",
+                it: "Scrivi un'email raccontando come [NOME_CLIENTE] è passato da [STATO_A] a [STATO_B] usando il mio metodo."
+            }},
+            { mod: 3, id: 15, name: {es: "15. Post-Compra", en: "15. Post-Purchase", pt: "15. Pós-Compra", de: "15. Nach-Kauf", fr: "15. Post-Achat", it: "15. Post-Acquisto"},
+              text: {
+                es: "Escribe el correo que reciben 7 días después de comprar para asegurar que están usando el producto y pedir feedback.",
+                en: "Write the email received 7 days after purchase to ensure they are using the product and ask for feedback.",
+                pt: "Escreva o e-mail recebido 7 dias após a compra para garantir que estão usando o produto e pedir feedback.",
+                de: "Schreiben Sie die E-Mail, die 7 Tage nach dem Kauf empfangen wird, um sicherzustellen, dass das Produkt genutzt wird, und um Feedback zu bitten.",
+                fr: "Écrivez l'e-mail reçu 7 jours après l'achat pour s'assurer qu'ils utilisent le produit et demander un retour.",
+                it: "Scrivi l'email ricevuta 7 giorni dopo l'acquisto per assicurarsi che stiano usando il prodotto e chiedere feedback."
+            }},
+            { mod: 3, id: 16, name: {es: "16. Asuntos Open Rate", en: "16. Open Rate Subs", pt: "16. Assuntos Open Rate", de: "16. Öffnungsraten-Betr", fr: "16. Objets Taux Ouv", it: "16. Oggetti Open Rate"},
+              text: {
+                es: "Dame 20 asuntos de email para [NICHO] que generen una curiosidad extrema y aumenten la tasa de apertura.",
+                en: "Give me 20 email subject lines for [NICHE] that generate extreme curiosity and increase open rates.",
+                pt: "Dê-me 20 assuntos de e-mail para [NICHO] que gerem curiosidade extrema e aumentem a taxa de abertura.",
+                de: "Geben Sie mir 20 E-Mail-Betreffzeilen für [NISCHE], die extreme Neugier wecken und die Öffnungsrate erhöhen.",
+                fr: "Donnez-moi 20 objets d'e-mail pour [NICHE] qui génèrent une curiosité extrême et augmentent le taux d'ouverture.",
+                it: "Dammi 20 oggetti email per [NICCHIA] che generino estrema curiosità e aumentino il tasso di apertura."
+            }},
+            { mod: 3, id: 17, name: {es: "17. Email Lo Siento", en: "17. Sorry Email", pt: "17. Email Desculpa", de: "17. Entschuldigung", fr: "17. Email Désolé", it: "17. Email Scusa"},
+              text: {
+                es: "Escribe un correo de disculpa por un error técnico (ej: link roto) que aproveche para dar un pequeño regalo y vender.",
+                en: "Write an apology email for a technical error (e.g., broken link) that takes advantage to give a small gift and sell.",
+                pt: "Escreva um e-mail de desculpas por um erro técnico (ex: link quebrado) aproveitando para dar um pequeno presente e vender.",
+                de: "Schreiben Sie eine Entschuldigungs-E-Mail für einen technischen Fehler (z.B. defekter Link), die die Gelegenheit nutzt, ein kleines Geschenk zu machen und zu verkaufen.",
+                fr: "Écrivez un e-mail d'excuse pour une erreur technique (ex: lien cassé) qui en profite pour offrir un petit cadeau et vendre.",
+                it: "Scrivi un'email di scuse per un errore tecnico (es: link rotto) che ne approfitti per fare un piccolo regalo e vendere."
+            }},
+            { mod: 3, id: 18, name: {es: "18. Última Oportunidad", en: "18. Last Chance", pt: "18. Última Chance", de: "18. Letzte Chance", fr: "18. Dernière Chance", it: "18. Ultima Occasione"},
+              text: {
+                es: "Escribe el correo final de una campaña que se envía 2 horas antes de que el precio suba o el bono desaparezca.",
+                en: "Write the final email of a campaign sent 2 hours before price goes up or bonus disappears.",
+                pt: "Escreva o e-mail final de uma campanha enviado 2 horas antes de o preço subir ou o bônus desaparecer.",
+                de: "Schreiben Sie die letzte E-Mail einer Kampagne, die 2 Stunden vor Preiserhöhung oder Bonus-Verschwinden gesendet wird.",
+                fr: "Écrivez l'e-mail final d'une campagne envoyé 2 heures avant que le prix n'augmente ou que le bonus ne disparaisse.",
+                it: "Scrivi l'email finale di una campagna inviata 2 ore prima che il prezzo aumenti o il bonus scompaia."
+            }},
+            { mod: 3, id: 19, name: {es: "19. Email Q&A", en: "19. Q&A Email", pt: "19. Email Q&A", de: "19. F&A Email", fr: "19. Email Q&R", it: "19. Email Q&A"},
+              text: {
+                es: "Escribe un email recopilando las 5 dudas más comunes de mis posibles compradores de [PRODUCTO].",
+                en: "Write an email compiling the 5 most common doubts of my potential buyers of [PRODUCT].",
+                pt: "Escreva um e-mail compilando as 5 dúvidas mais comuns dos meus possíveis compradores de [PRODUTO].",
+                de: "Schreiben Sie eine E-Mail, die die 5 häufigsten Zweifel meiner potenziellen Käufer von [PRODUKT] zusammenstellt.",
+                fr: "Écrivez un e-mail compilant les 5 doutes les plus courants de mes acheteurs potentiels de [PRODUIT].",
+                it: "Scrivi un'email raccogliendo i 5 dubbi più comuni dei miei potenziali acquirenti di [PRODOTTO]."
+            }},
+            { mod: 3, id: 20, name: {es: "20. Contenido Curado", en: "20. Curated Content", pt: "20. Conteúdo Curado", de: "20. Kuratierter Inhalt", fr: "20. Contenu Curaté", it: "20. Contenuto Curato"},
+              text: {
+                es: "Escribe un email donde recomiendes 3 herramientas o libros que uses en tu negocio de [NICHO] (pueden ser links de afiliado).",
+                en: "Write an email recommending 3 tools or books you use in your [NICHE] business (can be affiliate links).",
+                pt: "Escreva um e-mail recomendando 3 ferramentas ou livros que você usa no seu negócio de [NICHO] (podem ser links de afiliado).",
+                de: "Schreiben Sie eine E-Mail, in der Sie 3 Werkzeuge oder Bücher empfehlen, die Sie in Ihrem [NISCHE]-Geschäft nutzen (können Affiliate-Links sein).",
+                fr: "Écrivez un e-mail recommandant 3 outils ou livres que vous utilisez dans votre entreprise de [NICHE] (peuvent être des liens affiliés).",
+                it: "Scrivi un'email raccomandando 3 strumenti o libri che usi nella tua attività di [NICCHIA] (possono essere link di affiliazione)."
+            }},
+            { mod: 3, id: 21, name: {es: "21. Invitación VIP", en: "21. VIP Invite", pt: "21. Convite VIP", de: "21. VIP-Einladung", fr: "21. Invitation VIP", it: "21. Invito VIP"},
+              text: {
+                es: "Escribe un correo invitando a mis suscriptores a unirse a un grupo de WhatsApp o canal exclusivo para ofertas especiales.",
+                en: "Write an email inviting subscribers to join a WhatsApp group or exclusive channel for special offers.",
+                pt: "Escreva um e-mail convidando meus assinantes para entrar em um grupo de WhatsApp ou canal exclusivo para ofertas especiais.",
+                de: "Schreiben Sie eine E-Mail, die Abonnenten einlädt, einer WhatsApp-Gruppe oder einem exklusiven Kanal für Sonderangebote beizutreten.",
+                fr: "Écrivez un e-mail invitant les abonnés à rejoindre un groupe WhatsApp ou un canal exclusif pour des offres spéciales.",
+                it: "Scrivi un'email invitando gli abbonati a unirsi a un gruppo WhatsApp o canale esclusivo per offerte speciali."
+            }},
+            { mod: 3, id: 22, name: {es: "22. Email Gracias", en: "22. Thank You Email", pt: "22. Email Obrigado", de: "22. Dankeschön-Email", fr: "22. Email Merci", it: "22. Email Grazie"},
+              text: {
+                es: "Escribe un correo de agradecimiento sincero por ser parte de la comunidad, sin intentar vender nada, solo aportando valor puro.",
+                en: "Write a sincere thank you email for being part of the community, without trying to sell anything, just adding pure value.",
+                pt: "Escreva um e-mail de agradecimento sincero por fazer parte da comunidade, sem tentar vender nada, apenas agregando valor puro.",
+                de: "Schreiben Sie eine aufrichtige Dankeschön-E-Mail für die Teilhabe an der Community, ohne etwas verkaufen zu wollen, nur reinen Wert bietend.",
+                fr: "Écrivez un e-mail de remerciement sincère pour faire partie de la communauté, sans essayer de vendre quoi que ce soit, juste en apportant de la valeur pure.",
+                it: "Scrivi un'email di ringraziamento sincero per far parte della comunità, senza cercare di vendere nulla, solo fornendo puro valore."
+            }},
+            { mod: 3, id: 23, name: {es: "23. Downsell", en: "23. Downsell", pt: "23. Downsell", de: "23. Downsell", fr: "23. Downsell", it: "23. Downsell"},
+              text: {
+                es: "Alguien no compró mi producto de $500. Escribe un correo ofreciendo una opción más barata o un plan de pagos.",
+                en: "Someone didn't buy my $500 product. Write an email offering a cheaper option or payment plan.",
+                pt: "Alguém não comprou meu produto de $500. Escreva um e-mail oferecendo uma opção mais barata ou um plano de pagamento.",
+                de: "Jemand hat mein $500-Produkt nicht gekauft. Schreiben Sie eine E-Mail, die eine günstigere Option oder einen Zahlungsplan anbietet.",
+                fr: "Quelqu'un n'a pas acheté mon produit à 500 $. Écrivez un e-mail offrant une option moins chère ou un plan de paiement.",
+                it: "Qualcuno non ha comprato il mio prodotto da $500. Scrivi un'email offrendo un'opzione più economica o un piano di pagamento."
+            }},
+            { mod: 3, id: 24, name: {es: "24. Resultado Inmediato", en: "24. Instant Result", pt: "24. Resultado Imediato", de: "24. Sofortiges Ergebnis", fr: "24. Résultat Immédiat", it: "24. Risultato Immediato"},
+              text: {
+                es: "Escribe un email corto con un tip que el cliente pueda aplicar en 5 minutos para ver un pequeño cambio en [NICHO].",
+                en: "Write a short email with a tip the customer can apply in 5 minutes to see a small change in [NICHE].",
+                pt: "Escreva um e-mail curto com uma dica que o cliente possa aplicar em 5 minutos para ver uma pequena mudança em [NICHO].",
+                de: "Schreiben Sie eine kurze E-Mail mit einem Tipp, den der Kunde in 5 Minuten anwenden kann, um eine kleine Veränderung in [NISCHE] zu sehen.",
+                fr: "Écrivez un e-mail court avec une astuce que le client peut appliquer en 5 minutes pour voir un petit changement dans [NICHE].",
+                it: "Scrivi una breve email con un consiglio che il cliente può applicare in 5 minuti per vedere un piccolo cambiamento in [NICCHIA]."
+            }},
+            { mod: 3, id: 25, name: {es: "25. Post-Scriptum", en: "25. Post-Scriptum", pt: "25. Pós-Escrito", de: "25. Postskriptum", fr: "25. Post-Scriptum", it: "25. Post Scriptum"},
+              text: {
+                es: "Dame 5 ideas de Post-Scriptum poderosos para cerrar mis correos y redirigir al link de venta.",
+                en: "Give me 5 powerful Post-Scriptum ideas to close my emails and redirect to the sales link.",
+                pt: "Dê-me 5 ideias de Pós-Escrito poderosos para fechar meus e-mails e redirecionar para o link de venda.",
+                de: "Geben Sie mir 5 kraftvolle Postskriptum-Ideen, um meine E-Mails zu schließen und zum Verkaufslink umzuleiten.",
+                fr: "Donnez-moi 5 idées de Post-Scriptum puissants pour clore mes e-mails et rediriger vers le lien de vente.",
+                it: "Dammi 5 idee potenti di Post Scriptum per chiudere le mie email e reindirizzare al link di vendita."
+            }},
+            { mod: 3, id: 26, name: {es: "26. Opinión Polémica", en: "26. Controversial Opinion", pt: "26. Opinião Polêmica", de: "26. Kontroverse Meinung", fr: "26. Opinion Controversée", it: "26. Opinione Controversa"},
+              text: {
+                es: "Escribe un correo donde vayas en contra de una creencia popular en la industria de [INDUSTRIA] para generar debate.",
+                en: "Write an email going against a popular belief in the [INDUSTRY] industry to generate debate.",
+                pt: "Escreva um e-mail indo contra uma crença popular na indústria de [INDUSTRIA] para gerar debate.",
+                de: "Schreiben Sie eine E-Mail, die gegen einen populären Glauben in der [INDUSTRIE]-Branche geht, um Debatten zu erzeugen.",
+                fr: "Écrivez un e-mail allant à l'encontre d'une croyance populaire dans l'industrie de [INDUSTRIE] pour générer un débat.",
+                it: "Scrivi un'email andando contro una credenza popolare nell'industria di [INDUSTRIA] per generare dibattito."
+            }},
+            { mod: 3, id: 27, name: {es: "27. Correo Referidos", en: "27. Referral Email", pt: "27. Email Referidos", de: "27. Empfehlungs-Email", fr: "27. Email Parrainage", it: "27. Email Referral"},
+              text: {
+                es: "Escribe un email pidiendo a mis alumnos actuales que recomienden el curso a un amigo a cambio de [RECOMPENSA].",
+                en: "Write an email asking my current students to recommend the course to a friend in exchange for [REWARD].",
+                pt: "Escreva um e-mail pedindo aos meus alunos atuais que recomendem o curso a um amigo em troca de [RECOMPENSA].",
+                de: "Schreiben Sie eine E-Mail, in der Sie aktuelle Schüler bitten, den Kurs einem Freund gegen [BELOHNUNG] zu empfehlen.",
+                fr: "Écrivez un e-mail demandant à mes élèves actuels de recommander le cours à un ami en échange de [RECOMPENSE].",
+                it: "Scrivi un'email chiedendo ai miei attuali studenti di raccomandare il corso a un amico in cambio di [RICOMPENSA]."
+            }},
+            { mod: 3, id: 28, name: {es: "28. Email Cumpleaños", en: "28. Birthday Email", pt: "28. Email Aniversário", de: "28. Geburtstags-Email", fr: "28. Email Anniv", it: "28. Email Compleanno"},
+              text: {
+                es: "Crea una plantilla de correo de cumpleaños que ofrezca un cupón de descuento personalizado.",
+                en: "Create a birthday email template offering a personalized discount coupon.",
+                pt: "Crie um modelo de e-mail de aniversário oferecendo um cupom de desconto personalizado.",
+                de: "Erstellen Sie eine Geburtstags-E-Mail-Vorlage, die einen personalisierten Rabattgutschein anbietet.",
+                fr: "Créez un modèle d'e-mail d'anniversaire offrant un coupon de réduction personnalisé.",
+                it: "Crea un modello di email di compleanno che offra un coupon di sconto personalizzato."
+            }},
+            { mod: 3, id: 29, name: {es: "29. Bienvenida Programa", en: "29. Program Welcome", pt: "29. Boas-vindas Programa", de: "29. Programm Willkommen", fr: "29. Bienvenue Programme", it: "29. Benvenuto Programma"},
+              text: {
+                es: "Escribe el email entusiasta que recibe el alumno tras comprar [PRODUCTO] con los primeros pasos a seguir.",
+                en: "Write the enthusiastic email the student receives after buying [PRODUCT] with the first steps to follow.",
+                pt: "Escreva o e-mail entusiasmado que o aluno recebe após comprar [PRODUTO] com os primeiros passos a seguir.",
+                de: "Schreiben Sie die begeisterte E-Mail, die der Schüler nach dem Kauf von [PRODUKT] mit den ersten Schritten erhält.",
+                fr: "Écrivez l'e-mail enthousiaste que l'élève reçoit après avoir acheté [PRODUIT] avec les premières étapes à suivre.",
+                it: "Scrivi l'email entusiasta che lo studente riceve dopo aver acquistato [PRODOTTO] con i primi passi da seguire."
+            }},
+            { mod: 3, id: 30, name: {es: "30. Resumen Mensual", en: "30. Monthly Summary", pt: "30. Resumo Mensal", de: "30. Monatszusammenfassung", fr: "30. Résumé Mensuel", it: "30. Riepilogo Mensile"},
+              text: {
+                es: "Escribe un correo resumiendo lo mejor que pasó en el grupo de alumnos este mes para motivar a los que no han avanzado.",
+                en: "Write an email summarizing the best things that happened in the student group this month to motivate those who haven't progressed.",
+                pt: "Escreva um e-mail resumindo o melhor que aconteceu no grupo de alunos este mês para motivar quem não avançou.",
+                de: "Schreiben Sie eine E-Mail, die das Beste zusammenfasst, was diesen Monat in der Schülergruppe passiert ist, um diejenigen zu motivieren, die nicht vorangekommen sind.",
+                fr: "Écrivez un e-mail résumant le meilleur de ce qui s'est passé dans le groupe d'élèves ce mois-ci pour motiver ceux qui n'ont pas progressé.",
+                it: "Scrivi un'email riassumendo il meglio che è successo nel gruppo studenti questo mese per motivare chi non ha progredito."
+            }}
+        ];
+
+        let currentLang = 'es';
+        let currentModuleIndex = 0;
+        let isDarkMode = false;
+        const globalVariables = {};
+
+        function init() {
+            lucide.createIcons();
+            
+            // Auto dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                toggleTheme();
+            }
+            
+            setLanguage('es');
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.documentElement.classList.toggle('dark');
+            const themeText = document.getElementById('theme-text');
+            if(themeText) themeText.innerText = isDarkMode ? "Light Mode" : "Dark Mode";
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.id.includes(`lang-${lang}`)));
+            
+            const copyText = document.getElementById('ui-copied');
+            const footerText = document.getElementById('ui-footer-note');
+            
+            if(copyText) copyText.innerText = i18n[lang].copied;
+            if(footerText) footerText.innerText = i18n[lang].footer;
+            
+            // Safe Update of Navigation
+            const navIds = ['nav-mod-1', 'nav-mod-2', 'nav-mod-3', 'nav-mod-4'];
+            navIds.forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if(el) el.innerText = i18n[lang][`mod${idx+1}`].split(': ')[1];
+            });
+
+            // Update Mobile Buttons
+            const mModIds = ['m-mod-0', 'm-mod-1', 'm-mod-2', 'm-mod-3'];
+            mModIds.forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if(el) el.innerText = i18n[lang][`mod${idx+1}`].split(': ')[1].substring(0, 6).toUpperCase();
+            });
+
+            renderModule();
+        }
+
+        function switchModule(index) {
+            currentModuleIndex = index;
+            document.querySelectorAll('.sidebar-item').forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+                if (i !== index) { el.classList.remove('text-white'); }
+                else { el.classList.add('text-white'); }
+            });
+            
+            document.querySelectorAll('.mod-btn-m').forEach((el, i) => {
+                 if (i === index) {
+                    el.classList.remove('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                    el.classList.add('bg-indigo-600', 'text-white', 'active');
+                } else {
+                    el.classList.add('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                    el.classList.remove('bg-indigo-600', 'text-white', 'active');
+                }
+            });
+
+            renderModule();
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderModule() {
+            const modTitles = {
+                es: ["Estrategia", "Contenidos", "Copywriting", "Email Mkt"],
+                en: ["Strategy", "Content", "Copywriting", "Email Mkt"],
+                de: ["Strategie", "Inhalt", "Texterstellung", "E-Mail"],
+                fr: ["Stratégie", "Contenu", "Rédaction", "Email"],
+                pt: ["Estratégia", "Conteúdo", "Copywriting", "Email"],
+                it: ["Strategia", "Contenuti", "Copywriting", "Email"]
+            };
+
+            const modDescs = {
+                es: ["Estrategia de Negocio y Psicología", "Fábrica de Contenidos Virales", "Copywriting y Ventas Persuasivas", "Email Marketing y Automatización"],
+                en: ["Business Strategy & Psychology", "Viral Content Factory", "Copywriting & Persuasive Sales", "Email Marketing & Automation"],
+                de: ["Geschäftsstrategie & Psychologie", "Virale Content-Fabrik", "Werbetexten & Überzeugender Verkauf", "E-Mail-Marketing & Automatisierung"],
+                fr: ["Stratégie d'Entreprise & Psychologie", "Usine de Contenu Viral", "Copywriting & Vente Persuasive", "Email Marketing & Automatisation"],
+                pt: ["Estratégia de Negócios e Psicologia", "Fábrica de Conteúdo Viral", "Copywriting e Vendas Persuasivas", "Email Marketing e Automação"],
+                it: ["Strategia Aziendale e Psicologia", "Fabbrica di Contenuti Virali", "Copywriting e Vendite Persuasive", "Email Marketing e Automazione"]
+            };
+
+            const titleEl = document.getElementById('module-title');
+            if(titleEl) titleEl.innerText = modTitles[currentLang][currentModuleIndex];
+            
+            const descEl = document.getElementById('module-desc');
+            if(descEl) descEl.innerText = modDescs[currentLang][currentModuleIndex];
+            
+            const container = document.getElementById('prompts-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const filteredPrompts = promptDB.filter(p => p.mod === currentModuleIndex);
+            
+            if (filteredPrompts.length === 0) {
+                container.innerHTML = '<div class="text-center p-10 text-slate-400">Cargando base de datos...</div>';
+                return;
+            }
+
+            filteredPrompts.forEach((item, idx) => {
+                const text = replaceVars(item.text[currentLang], currentLang);
+                container.appendChild(createPromptCard(item.name[currentLang], text, item.mod, item.id));
+            });
+            lucide.createIcons();
+        }
+
+        function replaceVars(text, lang) {
+            if(!text) return "";
+            const v = varMap[lang];
+            let newText = text;
+            if (lang === 'en') newText = newText.replace(/\[NICHO\]/g, "[NICHE]").replace(/\[PRODUCTO\]/g, "[PRODUCT]");
+            // Add other replacements as needed
+            return newText;
+        }
+
+        function createPromptCard(title, text, modId, promptId) {
+            const div = document.createElement('div');
+            div.className = "prompt-card bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-all";
+            
+            const vars = text.match(/\[(.*?)\]/g) || [];
+            const uniqueVars = [...new Set(vars)];
+
+            let inputsHtml = uniqueVars.length > 0 ? `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-6 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/50">
+                ${uniqueVars.map(v => `<div>
+                    <label class="block text-[10px] uppercase font-black text-indigo-600 dark:text-indigo-400 mb-1 tracking-widest">${v.replace(/[\[\]]/g, '').replace(/_/g, ' ')}</label>
+                    <input type="text" placeholder="${i18n[currentLang].labelWrite}" oninput="updatePreview(${modId}, ${promptId}, '${v}', this.value)" class="w-full text-sm border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-slate-800 dark:text-white px-4 py-2 outline-none">
+                </div>`).join('')}
+            </div>` : '';
+
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-800 dark:text-white leading-tight uppercase tracking-tighter">${title}</h3>
+                    <div class="flex gap-2">
+                        <a href="https://chat.openai.com" target="_blank" class="ai-link"><i data-lucide="bot" class="w-3 h-3"></i> GPT</a>
+                        <a href="https://claude.ai/new" target="_blank" class="ai-link"><i data-lucide="brain-circuit" class="w-3 h-3"></i> CLAUDE</a>
+                        <a href="https://gemini.google.com/app" target="_blank" class="ai-link"><i data-lucide="sparkles" class="w-3 h-3"></i> GEMINI</a>
+                    </div>
+                </div>
+                ${inputsHtml}
+                <div class="relative group">
+                    <pre id="preview-${modId}-${promptId}" class="bg-slate-900 dark:bg-black text-slate-300 p-6 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap font-mono min-h-[80px] border border-slate-800 dark:border-slate-800 mb-4 shadow-inner">${text}</pre>
+                    <button onclick="copyToClipboard(${modId}, ${promptId})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-100 dark:shadow-none active:scale-95 group-hover:-translate-y-1">
+                        <i data-lucide="copy" class="w-4 h-4"></i> ${i18n[currentLang].copyBtn}
+                    </button>
+                </div>`;
+            return div;
+        }
+
+        // Functions updatePreview and copyToClipboard same as before
+        function updatePreview(modId, promptId, varPlaceholder, value) {
+             const previewEl = document.getElementById(`preview-${modId}-${promptId}`);
+             const prompt = promptDB.find(p => p.id === promptId && p.mod === modId);
+             const originalText = replaceVars(prompt.text[currentLang], currentLang);
+             
+             if(previewEl) previewEl.innerHTML = value ? previewEl.innerText.replace(varPlaceholder, `<span class="var-highlight">${value}</span>`) : originalText;
+        }
+
+        function copyToClipboard(modId, promptId) {
+             const notification = document.getElementById('copyNotification');
+             notification.style.display = 'flex';
+             setTimeout(() => notification.style.display = 'none', 2500);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
